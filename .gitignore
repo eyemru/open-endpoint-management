@@ -1,0 +1,25 @@
+# Secrets / local config
+*.env
+.env*
+secrets/
+*.pem
+*.key
+*.pfx
+
+# Terraform / IaC state (for later AWS work)
+*.tfstate
+*.tfstate.*
+.terraform/
+*.tfvars
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Logs and scratch
+*.log
+scratch/
+tmp/
