@@ -2,6 +2,8 @@
 
 **Status:** Draft · **Last updated:** 2026-06-20
 **Phase:** Assemble-first (Stage 1), with a defined path to a custom Hybrid build (Stage 2)
+**Companion to:** [requirements.md](requirements.md) — actors, use cases, and the
+functional/non-functional requirements this design satisfies (with a traceability matrix).
 
 ---
 

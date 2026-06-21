@@ -24,6 +24,7 @@ We are building in two stages:
 
 ## Docs
 
+- [Requirements & use cases](docs/requirements.md) — actors, use cases, functional/non-functional requirements, POC acceptance criteria.
 - [Design document](docs/design.md) — architecture, components, AWS topology, POC plan.
 - [Architecture decisions](docs/decisions/) — ADRs recording the why behind key choices.
 
