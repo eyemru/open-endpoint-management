@@ -111,7 +111,9 @@ realize it.
 
 ## 6. Baseline compliance policy set (the "definition of compliant")
 
-This is the concrete policy set FR-C3 refers to (mirrors design §7):
+This is the concrete policy set FR-C3 refers to (mirrors design §7). Full specs — osquery
+queries, severity, and remediation per policy — are in
+[compliance-policies.md](compliance-policies.md).
 
 | Policy | Compliant when | Maps to |
 |---|---|---|

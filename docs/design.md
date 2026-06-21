@@ -157,7 +157,8 @@ Each is an osquery query that returns "compliant" rows; Fleet marks pass/fail pe
     with three DNS records: `api.`, `rmm.`, `mesh.`), Fleet on a second small instance.
   - Option B (lean POC): a single instance running both via Docker Compose, accepting the
     extra fiddliness.
-- **Route53** hosted zone + records; **Let's Encrypt** (or ACM behind an ALB) for TLS.
+- **DNS + TLS:** for the POC, free **DuckDNS** dynamic DNS (not Route53) + **Let's Encrypt**.
+  See [infrastructure.md](infrastructure.md) §4 for the DuckDNS wildcard approach and caveats.
 - **Security group:** inbound 443 (agents) + restricted admin access (your IP / VPN);
   outbound open. SSH via SSM Session Manager (no public 22) preferred.
 - **Storage:** managed DB (RDS MySQL for Fleet, RDS Postgres for Tactical RMM) *or*
@@ -190,13 +191,14 @@ it and layer Fleet in for richer compliance.
 
 ## 12. Open questions
 
-- **Test endpoints:** confirm 2 local Win10/11 VMs vs. AWS WorkSpaces vs. EC2 Windows
-  Server (recommendation: local VMs — see §10).
-- **Domain name:** do we have a domain/subdomain to use for Route53 + TLS? Tactical RMM
-  *requires* this.
+**Resolved (2026-06-20):**
+- ~~Test endpoints~~ → **2 local Win10/11 VMs** (Hyper-V/VirtualBox).
+- ~~Domain name~~ → free **DuckDNS** for the POC (see infrastructure.md §4 caveats).
+
+**Still open:**
 - **Single instance vs. split:** co-host Fleet + TRMM on one EC2 (cheap) or separate
-  (cleaner)? Recommendation: separate small instances if budget allows; otherwise one.
-- **Admin access path:** SSO? VPN? IP allowlist for the admin UIs?
+  (cleaner)? Recommendation: separate small instances; single-instance variant documented.
+- **Admin access path:** SSO? VPN? IP allowlist for the admin UIs? (Default: IP allowlist.)
 - **Licensing sign-off:** confirm Tactical RMM license fit for the intended (non-POC) use.
 
 ## 13. Roadmap to Stage 2 (Hybrid)
