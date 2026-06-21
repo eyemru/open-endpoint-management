@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="600" viewBox="0 0 1000 600" content="&lt;mxfile host=&quot;app.diagrams.net&quot; type=&quot;device&quot;&gt;
+  &lt;diagram id=&quot;arch-stage1&quot; name=&quot;Architecture (Stage 1)&quot;&gt;
+    &lt;mxGraphModel dx=&quot;1000&quot; dy=&quot;640&quot; grid=&quot;1&quot; gridSize=&quot;10&quot; guides=&quot;1&quot; tooltips=&quot;1&quot;
+        connect=&quot;1&quot; arrows=&quot;1&quot; fold=&quot;1&quot; page=&quot;1&quot; pageScale=&quot;1&quot; pageWidth=&quot;1000&quot;
+        pageHeight=&quot;600&quot; math=&quot;0&quot; shadow=&quot;0&quot;&gt;
+      &lt;root&gt;
+        &lt;mxCell id=&quot;0&quot;/&gt;
+        &lt;mxCell id=&quot;1&quot; parent=&quot;0&quot;/&gt;
+
+        &lt;mxCell id=&quot;epg&quot; value=&quot;Windows 10 / 11 endpoints  (~500 desktops + roaming laptops)&quot;
+            style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F5F8;strokeColor=#1B6CA8;verticalAlign=top;fontStyle=1;fontColor=#0B2545;fontSize=13;arcSize=6;&quot;
+            vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry x=&quot;40&quot; y=&quot;70&quot; width=&quot;300&quot; height=&quot;400&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;fleetd&quot; value=&quot;fleetd agent (osquery)&amp;#10;Inventory + compliance telemetry&quot;
+            style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1B6CA8;fontColor=#0B2545;fontSize=12;&quot;
+            vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry x=&quot;65&quot; y=&quot;140&quot; width=&quot;250&quot; height=&quot;95&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;trmma&quot; value=&quot;Tactical RMM agent (Go service)&amp;#10;Patching · software · scripts&amp;#10;MeshCentral (remote access)&quot;
+            style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#13A89E;fontColor=#0B2545;fontSize=12;&quot;
+            vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry x=&quot;65&quot; y=&quot;265&quot; width=&quot;250&quot; height=&quot;130&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;
+
+        &lt;mxCell id=&quot;dns&quot; value=&quot;DuckDNS (dynamic DNS)  +  Let&#x27;s Encrypt TLS&quot;
+            style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#0B2545;strokeColor=none;fontColor=#FFFFFF;fontSize=11;fontStyle=1;arcSize=40;&quot;
+            vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry x=&quot;660&quot; y=&quot;22&quot; width=&quot;300&quot; height=&quot;30&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;awsg&quot; value=&quot;AWS control plane  (POC: 1–2 EC2 instances)&quot;
+            style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F5F8;strokeColor=#0B2545;verticalAlign=top;fontStyle=1;fontColor=#0B2545;fontSize=13;arcSize=5;&quot;
+            vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry x=&quot;660&quot; y=&quot;60&quot; width=&quot;300&quot; height=&quot;410&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;fleetsrv&quot; value=&quot;FleetDM server  →  MySQL + Redis&amp;#10;Inventory · policies · dashboard&quot;
+            style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1B6CA8;fontColor=#0B2545;fontSize=12;&quot;
+            vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry x=&quot;685&quot; y=&quot;120&quot; width=&quot;250&quot; height=&quot;110&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;trmmsrv&quot; value=&quot;Tactical RMM  →  Postgres + Redis + NATS&amp;#10;Patching · scripts · alerts · MeshCentral&quot;
+            style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#13A89E;fontColor=#0B2545;fontSize=12;&quot;
+            vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry x=&quot;685&quot; y=&quot;255&quot; width=&quot;250&quot; height=&quot;140&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;
+
+        &lt;mxCell id=&quot;admin&quot; value=&quot;IT Admin / IT team&quot;
+            style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#0B2545;fontColor=#0B2545;fontSize=12;fontStyle=1;&quot;
+            vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry x=&quot;730&quot; y=&quot;505&quot; width=&quot;180&quot; height=&quot;55&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;
+
+        &lt;mxCell id=&quot;e1&quot; value=&quot;HTTPS 443 · telemetry / live queries&quot;
+            style=&quot;endArrow=block;startArrow=block;html=1;strokeColor=#5A6B7B;fontColor=#5A6B7B;fontSize=11;&quot;
+            edge=&quot;1&quot; parent=&quot;1&quot; source=&quot;fleetd&quot; target=&quot;fleetsrv&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e2&quot; value=&quot;HTTPS 443 · report / pull jobs&quot;
+            style=&quot;endArrow=block;startArrow=block;html=1;strokeColor=#5A6B7B;fontColor=#5A6B7B;fontSize=11;&quot;
+            edge=&quot;1&quot; parent=&quot;1&quot; source=&quot;trmma&quot; target=&quot;trmmsrv&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e3&quot; value=&quot;HTTPS · dashboards&quot;
+            style=&quot;endArrow=block;html=1;strokeColor=#5A6B7B;fontColor=#5A6B7B;fontSize=11;&quot;
+            edge=&quot;1&quot; parent=&quot;1&quot; source=&quot;admin&quot; target=&quot;awsg&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;
+
+        &lt;mxCell id=&quot;note&quot; value=&quot;Outbound 443 only — reaches roaming laptops (no inbound / VPN)&quot;
+            style=&quot;text;html=1;align=center;fontColor=#0B2545;fontSize=11;fillColor=#EAF1F6;rounded=1;strokeColor=none;&quot;
+            vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry x=&quot;355&quot; y=&quot;436&quot; width=&quot;290&quot; height=&quot;34&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;
+      &lt;/root&gt;
+    &lt;/mxGraphModel&gt;
+  &lt;/diagram&gt;
+&lt;/mxfile&gt;">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="8" refX="8" refY="3"
+            orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#5A6B7B"/>
+    </marker>
+    <marker id="arrs" markerWidth="10" markerHeight="8" refX="0" refY="3"
+            orient="auto" markerUnits="strokeWidth">
+      <path d="M8,0 L0,3 L8,6 Z" fill="#5A6B7B"/>
+    </marker>
+  </defs>
+<rect x="0" y="0" width="1000" height="600" rx="14" fill="#FFFFFF"/>
+<g font-family="Helvetica, Arial, sans-serif">
+  <!-- Endpoints group -->
+  <rect x="40" y="70" width="300" height="400" rx="12" ry="12" fill="#F2F5F8" stroke="#1B6CA8" stroke-width="2"/>
+  <text x="190" y="100" font-size="15" fill="#0B2545" font-weight="bold" text-anchor="middle">Windows 10 / 11 endpoints</text>
+  <text x="190" y="120" font-size="11" fill="#5A6B7B" font-weight="normal" text-anchor="middle">~500 desktops + roaming laptops</text>
+
+  <rect x="65" y="140" width="250" height="95" rx="8" ry="8" fill="#FFFFFF" stroke="#1B6CA8" stroke-width="2"/>
+  <text x="190" y="173" font-size="14" fill="#0B2545" font-weight="bold" text-anchor="middle">fleetd agent (osquery)</text>
+  <text x="190" y="195" font-size="11" fill="#5A6B7B" font-weight="normal" text-anchor="middle">Inventory + compliance</text>
+  <text x="190" y="211" font-size="11" fill="#5A6B7B" font-weight="normal" text-anchor="middle">telemetry</text>
+
+  <rect x="65" y="265" width="250" height="130" rx="8" ry="8" fill="#FFFFFF" stroke="#13A89E" stroke-width="2"/>
+  <text x="190" y="298" font-size="14" fill="#0B2545" font-weight="bold" text-anchor="middle">Tactical RMM agent</text>
+  <text x="190" y="316" font-size="11" fill="#5A6B7B" font-weight="normal" text-anchor="middle">(Go Windows service)</text>
+  <text x="190" y="340" font-size="11" fill="#5A6B7B" font-weight="normal" text-anchor="middle">Patching · software · scripts</text>
+  <text x="190" y="358" font-size="11" fill="#5A6B7B" font-weight="normal" text-anchor="middle">MeshCentral (remote access)</text>
+
+  <!-- DNS / TLS pill -->
+  <rect x="660" y="22" width="300" height="30" rx="15" fill="#0B2545"/>
+  <text x="810" y="42" font-size="11.5" fill="#FFFFFF" font-weight="bold" text-anchor="middle">DuckDNS (dynamic DNS)  +  Let&#x27;s Encrypt TLS</text>
+
+  <!-- AWS group -->
+  <rect x="660" y="60" width="300" height="410" rx="10" ry="10" fill="#F2F5F8" stroke="#0B2545" stroke-width="2"/>
+  <text x="810" y="90" font-size="15" fill="#0B2545" font-weight="bold" text-anchor="middle">AWS control plane</text>
+  <text x="810" y="110" font-size="11" fill="#5A6B7B" font-weight="normal" text-anchor="middle">POC: 1–2 EC2 instances</text>
+
+  <rect x="685" y="124" width="250" height="106" rx="8" ry="8" fill="#FFFFFF" stroke="#1B6CA8" stroke-width="2"/>
+  <text x="810" y="156" font-size="12.5" fill="#0B2545" font-weight="bold" text-anchor="middle">FleetDM server  →  MySQL + Redis</text>
+  <text x="810" y="180" font-size="11" fill="#5A6B7B" font-weight="normal" text-anchor="middle">Inventory · policies · dashboard</text>
+
+  <rect x="685" y="258" width="250" height="137" rx="8" ry="8" fill="#FFFFFF" stroke="#13A89E" stroke-width="2"/>
+  <text x="810" y="290" font-size="12.5" fill="#0B2545" font-weight="bold" text-anchor="middle">Tactical RMM server</text>
+  <text x="810" y="310" font-size="11" fill="#5A6B7B" font-weight="normal" text-anchor="middle">→ Postgres + Redis + NATS</text>
+  <text x="810" y="334" font-size="11" fill="#5A6B7B" font-weight="normal" text-anchor="middle">Patching · scripts · alerts</text>
+  <text x="810" y="352" font-size="11" fill="#5A6B7B" font-weight="normal" text-anchor="middle">MeshCentral (remote)</text>
+
+  <!-- Edges -->
+  <line x1="318" y1="186" x2="682" y2="176" stroke="#5A6B7B" stroke-width="2"
+        marker-end="url(#arr)" marker-start="url(#arrs)"/>
+  <text x="500" y="150" font-size="11" fill="#5A6B7B" font-weight="normal" text-anchor="middle">HTTPS 443 · telemetry / live queries</text>
+
+  <line x1="318" y1="330" x2="682" y2="326" stroke="#5A6B7B" stroke-width="2"
+        marker-end="url(#arr)" marker-start="url(#arrs)"/>
+  <text x="500" y="312" font-size="11" fill="#5A6B7B" font-weight="normal" text-anchor="middle">HTTPS 443 · report / pull jobs</text>
+
+  <!-- roaming note -->
+  <rect x="355" y="436" width="290" height="34" rx="8" fill="#EAF1F6"/>
+  <text x="500" y="457" font-size="11" fill="#0B2545" font-weight="bold" text-anchor="middle">Outbound 443 only — reaches roaming laptops</text>
+
+  <!-- Admin -->
+  <rect x="730" y="505" width="180" height="55" rx="8" ry="8" fill="#FFFFFF" stroke="#0B2545" stroke-width="2"/>
+  <text x="820" y="530" font-size="12.5" fill="#0B2545" font-weight="bold" text-anchor="middle">IT Admin / IT team</text>
+  <text x="820" y="547" font-size="10.5" fill="#5A6B7B" font-weight="normal" text-anchor="middle">manages via browser</text>
+  <line x1="820" y1="505" x2="820" y2="472" stroke="#5A6B7B" stroke-width="2"
+        marker-end="url(#arr)"/>
+  <text x="690" y="492" font-size="10.5" fill="#5A6B7B" font-weight="normal" text-anchor="end">HTTPS · dashboards</text>
+</g>
+</svg>

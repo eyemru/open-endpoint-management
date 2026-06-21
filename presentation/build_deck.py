@@ -420,38 +420,44 @@ s = slide()
 bg(s)
 topbar(s, "The economics", "A fraction of the commercial cost")
 
-# Left: commercial
-rect(s, Inches(0.9), Inches(2.1), Inches(5.6), Inches(3.6), fill=LIGHT)
-rect(s, Inches(0.9), Inches(2.1), Inches(5.6), Inches(0.12), fill=RED)
-tb, tf = textbox(s, Inches(1.2), Inches(2.4), Inches(5.0), Inches(3.1))
-setpara(tf.paragraphs[0], "Commercial tools", 18, color=NAVY, bold=True, space_after=10)
-setpara(tf.add_paragraph(), "$3–7 per device, per month", 16, color=RED, bold=True,
-        space_after=10)
-setpara(tf.add_paragraph(), "~500 devices  ≈  $18,000–42,000 / year", 15, color=GRAY,
-        space_after=10)
-setpara(tf.add_paragraph(), "Ongoing, per-seat, and rising as we grow.", 13, color=GRAY)
+# Three options: commercial vs. this solution on AWS vs. this solution on-prem
+options = [
+    ("Commercial tools", RED, "$3–7 / device / mo", RED,
+     ["~500 devices  ≈", "$18,000–42,000 / year",
+      "Ongoing per-seat fees,", "rising as we grow."]),
+    ("This solution — AWS", TEAL, "~$100 / month", TEAL,
+     ["≈ $1,200 / year", "+ existing IT staff time",
+      "No per-seat fees;", "scales to 500+ at flat cost."]),
+    ("This solution — on-prem", GREEN, "$0 hosting", GREEN,
+     ["Repurpose a server", "we already own",
+      "No new hardware or licensing", "— just our IT staff time."]),
+]
+cx0, cw, cgap = Inches(0.6), Inches(3.8), Inches(0.36)
+cy0, ch = Inches(2.05), Inches(3.75)
+for i, (title, ac, head, hc, subs) in enumerate(options):
+    cx = cx0 + i * (cw + cgap)
+    rect(s, cx, cy0, cw, ch, fill=LIGHT)
+    rect(s, cx, cy0, cw, Inches(0.12), fill=ac)
+    tb, tf = textbox(s, cx + Inches(0.28), cy0 + Inches(0.32), cw - Inches(0.56),
+                     ch - Inches(0.5))
+    setpara(tf.paragraphs[0], title, 16, color=NAVY, bold=True, space_after=12)
+    setpara(tf.add_paragraph(), head, 21, color=hc, bold=True, font=FONT_H, space_after=14)
+    for j, sline in enumerate(subs):
+        setpara(tf.add_paragraph(), sline, 13, color=GRAY,
+                space_after=(10 if j == 1 else 3))
 
-# Right: this solution
-rect(s, Inches(6.85), Inches(2.1), Inches(5.6), Inches(3.6), fill=LIGHT)
-rect(s, Inches(6.85), Inches(2.1), Inches(5.6), Inches(0.12), fill=GREEN)
-tb, tf = textbox(s, Inches(7.15), Inches(2.4), Inches(5.0), Inches(3.1))
-setpara(tf.paragraphs[0], "This solution", 18, color=NAVY, bold=True, space_after=10)
-setpara(tf.add_paragraph(), "~$100 / month hosting", 16, color=GREEN, bold=True,
-        space_after=10)
-setpara(tf.add_paragraph(), "≈ $1,200 / year  +  existing IT staff time", 15, color=GRAY,
-        space_after=10)
-setpara(tf.add_paragraph(), "No per-seat fees. Scales to 500+ at the same low cost.", 13,
-        color=GRAY)
-
-tb, tf = textbox(s, Inches(0.9), Inches(5.95), Inches(11.5), Inches(0.9))
+tb, tf = textbox(s, Inches(0.6), Inches(6.0), Inches(12.1), Inches(0.9))
 setpara(tf.paragraphs[0],
-        "Illustrative figures. The trade is software licensing cost for a modest amount of "
-        "our own engineering time — and we keep full control of our data.",
+        "Illustrative figures. We trade software licensing cost for a modest amount of our "
+        "own IT time — and we keep full control of our data. Repurposing existing on-prem "
+        "hardware removes even the hosting cost.",
         13, color=GRAY)
 footer(s, num())
-notes(s, "Be transparent: the numbers are illustrative ranges, not quotes. The honest "
-         "trade-off is licensing dollars vs. internal staff time. Even costing our time, the "
-         "savings are large — and the data stays in-house.")
+notes(s, "Three ways to pay for this. The numbers are illustrative ranges, not quotes. "
+         "Option 3 is the kicker for a cost-conscious board: if we have a server with spare "
+         "capacity, hosting is effectively free — we only spend a little internal time. "
+         "Even on AWS, we're an order of magnitude below commercial per-seat pricing, and "
+         "in every case the data stays in-house.")
 
 # ===========================================================================
 # 11. PHASED, LOW-RISK APPROACH

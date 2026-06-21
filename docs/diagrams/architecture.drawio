@@ -1,0 +1,53 @@
+<mxfile host="app.diagrams.net" type="device">
+  <diagram id="arch-stage1" name="Architecture (Stage 1)">
+    <mxGraphModel dx="1000" dy="640" grid="1" gridSize="10" guides="1" tooltips="1"
+        connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1000"
+        pageHeight="600" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="epg" value="Windows 10 / 11 endpoints  (~500 desktops + roaming laptops)"
+            style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F5F8;strokeColor=#1B6CA8;verticalAlign=top;fontStyle=1;fontColor=#0B2545;fontSize=13;arcSize=6;"
+            vertex="1" parent="1"><mxGeometry x="40" y="70" width="300" height="400" as="geometry"/></mxCell>
+        <mxCell id="fleetd" value="fleetd agent (osquery)&#10;Inventory + compliance telemetry"
+            style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1B6CA8;fontColor=#0B2545;fontSize=12;"
+            vertex="1" parent="1"><mxGeometry x="65" y="140" width="250" height="95" as="geometry"/></mxCell>
+        <mxCell id="trmma" value="Tactical RMM agent (Go service)&#10;Patching · software · scripts&#10;MeshCentral (remote access)"
+            style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#13A89E;fontColor=#0B2545;fontSize=12;"
+            vertex="1" parent="1"><mxGeometry x="65" y="265" width="250" height="130" as="geometry"/></mxCell>
+
+        <mxCell id="dns" value="DuckDNS (dynamic DNS)  +  Let's Encrypt TLS"
+            style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0B2545;strokeColor=none;fontColor=#FFFFFF;fontSize=11;fontStyle=1;arcSize=40;"
+            vertex="1" parent="1"><mxGeometry x="660" y="22" width="300" height="30" as="geometry"/></mxCell>
+        <mxCell id="awsg" value="AWS control plane  (POC: 1–2 EC2 instances)"
+            style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F5F8;strokeColor=#0B2545;verticalAlign=top;fontStyle=1;fontColor=#0B2545;fontSize=13;arcSize=5;"
+            vertex="1" parent="1"><mxGeometry x="660" y="60" width="300" height="410" as="geometry"/></mxCell>
+        <mxCell id="fleetsrv" value="FleetDM server  →  MySQL + Redis&#10;Inventory · policies · dashboard"
+            style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1B6CA8;fontColor=#0B2545;fontSize=12;"
+            vertex="1" parent="1"><mxGeometry x="685" y="120" width="250" height="110" as="geometry"/></mxCell>
+        <mxCell id="trmmsrv" value="Tactical RMM  →  Postgres + Redis + NATS&#10;Patching · scripts · alerts · MeshCentral"
+            style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#13A89E;fontColor=#0B2545;fontSize=12;"
+            vertex="1" parent="1"><mxGeometry x="685" y="255" width="250" height="140" as="geometry"/></mxCell>
+
+        <mxCell id="admin" value="IT Admin / IT team"
+            style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#0B2545;fontColor=#0B2545;fontSize=12;fontStyle=1;"
+            vertex="1" parent="1"><mxGeometry x="730" y="505" width="180" height="55" as="geometry"/></mxCell>
+
+        <mxCell id="e1" value="HTTPS 443 · telemetry / live queries"
+            style="endArrow=block;startArrow=block;html=1;strokeColor=#5A6B7B;fontColor=#5A6B7B;fontSize=11;"
+            edge="1" parent="1" source="fleetd" target="fleetsrv"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e2" value="HTTPS 443 · report / pull jobs"
+            style="endArrow=block;startArrow=block;html=1;strokeColor=#5A6B7B;fontColor=#5A6B7B;fontSize=11;"
+            edge="1" parent="1" source="trmma" target="trmmsrv"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e3" value="HTTPS · dashboards"
+            style="endArrow=block;html=1;strokeColor=#5A6B7B;fontColor=#5A6B7B;fontSize=11;"
+            edge="1" parent="1" source="admin" target="awsg"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="note" value="Outbound 443 only — reaches roaming laptops (no inbound / VPN)"
+            style="text;html=1;align=center;fontColor=#0B2545;fontSize=11;fillColor=#EAF1F6;rounded=1;strokeColor=none;"
+            vertex="1" parent="1"><mxGeometry x="355" y="436" width="290" height="34" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

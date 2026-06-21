@@ -28,7 +28,7 @@ python3 presentation/build_deck.py
 7. **How it works** — devices phone home securely; reaches roaming laptops.
 8. **Foundation** — trusted OSS (FleetDM/osquery, Tactical RMM), no lock-in.
 9. **Assurance** — compliance & security controls, audit-ready.
-10. **Economics** — ~$1.2k/yr vs. $18–42k/yr commercial (illustrative).
+10. **Economics** — three options: commercial ($18–42k/yr) vs. AWS (~$1.2k/yr) vs. repurposed on-prem server ($0 hosting); illustrative.
 11. **Phased plan** — POC → pilot → fleet, with go/no-go gates.
 12. **Risks & mitigations** — honest view (incl. the "no vendor" objection).
 13. **The ask** — approve a 4–6 week, near-zero-cost POC on 2 devices.
