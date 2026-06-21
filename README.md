@@ -29,6 +29,7 @@ We are building in two stages:
 - [Compliance policy catalog](docs/compliance-policies.md) — per-policy osquery queries + remediation specs.
 - [Infrastructure & setup plan](docs/infrastructure.md) — AWS network, instance sizing, DNS/TLS, install runbooks (M0–M1).
 - [Architecture decisions](docs/decisions/) — ADRs recording the why behind key choices.
+- [Executive briefing deck](presentation/) — exec-level pitch (PowerPoint) for the business case.
 
 ## Status
 
