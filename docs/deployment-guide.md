@@ -1,26 +1,34 @@
-# Deployment Guide — Tactical RMM Control Plane on AWS
+# Deployment Guide — Endpoint Management on AWS (Tactical RMM + Fleet)
 
-**Status:** Validated end-to-end on 2026-06-21 · **Companion:** [agent-install-guide.md](agent-install-guide.md)
+**Status:** Validated end-to-end on 2026-06-22 · **Companion:** [agent-install-guide.md](agent-install-guide.md)
 
-A repeatable, step-by-step guide to stand up the open-source endpoint-management control
-plane (**Tactical RMM**) on AWS, secure it with TLS, and verify it — then operate and tear
-it down. Everything is scripted in [`infra/scripts/`](../infra/scripts/); this guide explains
-the *why* and gives both the **automated** and **manual** paths.
+A repeatable, step-by-step guide to stand up the open-source, assemble-first endpoint-
+management stack on AWS — **Tactical RMM** (remediation) and **FleetDM** (compliance) — secure
+both with TLS, verify, then operate and tear down. Everything is scripted in
+[`infra/scripts/`](../infra/scripts/); this guide explains the *why* and gives both the
+**automated** and **manual** paths. (The core flow below stands up TRMM; §7b adds Fleet.)
 
 ---
 
 ## 1. What you get
 
-A single EC2 instance running Tactical RMM (inventory, remote command, software deploy via
-Chocolatey, Windows patching, MeshCentral remote access), reachable at
-`https://rmm.<your-domain>`, with a valid Let's Encrypt certificate. Endpoints phone home
-over HTTPS/443, so roaming laptops work without VPN or inbound firewall rules.
+**Two** EC2 instances forming an assemble-first stack, both with valid Let's Encrypt TLS:
+- **Tactical RMM** (remediation) — inventory, remote command, software deploy via Chocolatey,
+  Windows patching, MeshCentral remote access — at `https://rmm.<your-domain>`.
+- **FleetDM** (compliance) — osquery-based visibility and pass/fail policy posture
+  (CP-01…CP-08) — at `https://<fleet-host>`.
+
+Endpoints phone home over HTTPS/443, so roaming laptops work without VPN or inbound firewall
+rules. You can deploy just TRMM (§4–§6) and add Fleet later (§7b), or both.
 
 ```
-  Windows endpoints ──HTTPS 443──►  EC2 (Ubuntu 22.04)            DuckDNS  ──► EIP
-   (TRMM agent)      ◄──jobs────     Tactical RMM + MeshCentral   (rmm/api/mesh/root)
-                                     Postgres · Redis · NATS · nginx + Let's Encrypt
-   You ──browser/HTTPS──► rmm.<domain>          Managed from your Mac via AWS SSM (443)
+                          ┌─► EC2 #1: Tactical RMM (remediation)
+  Windows endpoints       │     Postgres·Redis·NATS·MeshCentral·nginx + LE TLS   rmm.<domain>
+   • TRMM agent ──HTTPS───┤
+   • fleetd (osquery) ────┘─► EC2 #2: FleetDM (compliance)
+                                MySQL·Redis·Fleet (Docker) + LE TLS               <fleet-host>
+   You ──browser──► rmm.<domain> = "fix"   ·   <fleet-host> = "prove"
+   Both managed from your Mac via AWS SSM over 443 — no SSH.
 ```
 
 ## 2. Prerequisites
@@ -46,8 +54,12 @@ over HTTPS/443, so roaming laptops work without VPN or inbound firewall rules.
 - **TLS via HTTP-01**, not the installer's interactive wildcard DNS-01 challenge — fully
   non-interactive and needs no DNS token. We hand the cert to the installer with
   `--use-own-cert`.
-- **Unattended install** driven by `expect` (the official installer is interactive and
+- **Unattended install** driven by `expect` (the official TRMM installer is interactive and
   refuses to run as root). See [`infra/scripts/remote/install-trmm.sh`](../infra/scripts/remote/install-trmm.sh).
+- **Fleet is a separate instance** with its own EIP/DNS, deployed via **Docker Compose**
+  (MySQL + Redis + Fleet) with Let's Encrypt TLS — see
+  [`infra/scripts/remote/fleet-install.sh`](../infra/scripts/remote/fleet-install.sh). Kept
+  apart from TRMM to avoid resource contention and mirror the real two-system design.
 
 ## 4. Automated path (recommended)
 
