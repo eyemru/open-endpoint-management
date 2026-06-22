@@ -28,6 +28,24 @@ tf()      { terraform -chdir="$INFRA_DIR" "$@"; }
 get_eip() { tf output -raw public_ip   2>/dev/null || true; }
 get_iid() { tf output -raw instance_id 2>/dev/null || true; }
 
+# Fail fast with a clear message if tooling/creds/config aren't ready.
+# Pass the names of config vars that must be set (not empty / not REPLACE_ME).
+preflight() {
+  local miss=0 t v val
+  for t in aws terraform python3 curl dig; do
+    command -v "$t" >/dev/null 2>&1 || { warn "missing required tool: $t"; miss=1; }
+  done
+  if command -v aws >/dev/null 2>&1; then
+    aws sts get-caller-identity >/dev/null 2>&1 || { warn "AWS credentials not working (aws sts get-caller-identity failed)"; miss=1; }
+  fi
+  for v in "$@"; do
+    val="${!v:-}"
+    case "$val" in ""|REPLACE_ME*) warn "config.env: '$v' is not set"; miss=1 ;; esac
+  done
+  [ "$miss" -eq 0 ] || die "preflight failed — fix the above, then re-run."
+  ok "preflight ok ($(aws sts get-caller-identity --query Arn --output text 2>/dev/null), region $AWS_REGION)"
+}
+
 # Wait until the instance is registered + online in SSM.
 ssm_wait_online() {
   local iid="$1" tries="${2:-40}" i p
@@ -69,6 +87,7 @@ ssm_run_file() {
         --parameters "$params" --query 'Command.CommandId' --output text)" \
     || die "ssm send-command failed"
 
+  local waited=0 maxwait=$(( timeout + 180 ))
   while :; do
     st="$(aws ssm get-command-invocation --region "$AWS_REGION" --command-id "$cid" \
           --instance-id "$iid" --query Status --output text 2>/dev/null || echo Pending)"
@@ -79,7 +98,8 @@ ssm_run_file() {
             --instance-id "$iid" --query 'StandardErrorContent' --output text >&2 || true
         die "SSM command $st (command-id=$cid)" ;;
     esac
-    sleep 10
+    sleep 10; waited=$(( waited + 10 ))
+    [ "$waited" -ge "$maxwait" ] && die "SSM command still running after ${maxwait}s (command-id=$cid) — check the AWS SSM console"
   done
   aws ssm get-command-invocation --region "$AWS_REGION" --command-id "$cid" \
       --instance-id "$iid" --query 'StandardOutputContent' --output text

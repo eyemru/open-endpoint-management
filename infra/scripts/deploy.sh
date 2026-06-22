@@ -8,6 +8,7 @@
 
 say "================  Tactical RMM full deployment  ================"
 say "Region=$AWS_REGION  Project=$PROJECT  Domain=$TRMM_ROOT"
+preflight DUCKDNS_TOKEN TRMM_ADMIN_PASS
 echo
 
 "$SCRIPT_DIR/10-provision.sh"

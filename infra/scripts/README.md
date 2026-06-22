@@ -23,7 +23,29 @@ aws sts get-caller-identity          # confirm AWS creds are active
 
 ```bash
 ./deploy.sh        # provision -> DNS -> cert -> install -> verify  (~20-35 min)
+./fleet-deploy.sh  # then add the Fleet compliance plane              (~10-15 min)
 ```
+`deploy.sh` and `fleet-deploy.sh` run a **preflight** first (checks aws/terraform/python3/
+curl/dig, valid AWS creds, and that required `config.env` values are set) and stop with a
+clear message if anything's missing.
+
+## First solo run — what to expect
+- **Long steps are quiet.** The cert/install steps run on the box via SSM and only print at
+  the end. To watch progress live, in another terminal tail the remote log:
+  ```bash
+  aws ssm send-command --region "$AWS_REGION" --instance-ids <id> \
+    --document-name AWS-RunShellScript \
+    --parameters 'commands=["tail -n 40 /opt/fleet/install.log 2>/dev/null || tail -n 40 /home/ubuntu/trmm_install.log"]' \
+    --query Command.CommandId --output text
+  # then: aws ssm get-command-invocation --command-id <cid> --instance-id <id> --query StandardOutputContent --output text
+  ```
+- **Validated vs. not:** the TRMM remote install was run end-to-end live; the local
+  orchestration and the Fleet install are hardened + statically validated (`terraform plan`,
+  preflight) but not yet executed verbatim end-to-end — **watch the Fleet step the first time**.
+- **If SSM never comes online** after provisioning (rare now that the IAM role is attached at
+  launch): `aws ec2 reboot-instances --region <r> --instance-ids <id>`, wait ~2 min, re-run.
+- **Re-runnable?** All steps are, **except** `40-install.sh` / `fleet-deploy.sh` (they assume a
+  fresh box). To rebuild, `teardown.sh` then deploy again.
 
 ## Step by step (same thing, one phase at a time)
 

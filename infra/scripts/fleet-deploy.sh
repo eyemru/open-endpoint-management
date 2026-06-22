@@ -3,6 +3,7 @@
 # Prereq: the Fleet instance exists (run ./10-provision.sh or ./deploy.sh first,
 # which Terraform-creates both the TRMM and Fleet instances).
 . "$(dirname "$0")/lib.sh"
+preflight FLEET_ADMIN_EMAIL FLEET_ADMIN_PASS
 : "${FLEET_ADMIN_EMAIL:?set in config.env}"
 : "${FLEET_ADMIN_PASS:?set in config.env (>=12 chars)}"
 
