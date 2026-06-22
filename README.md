@@ -32,6 +32,7 @@ We are building in two stages:
 - [**Agent install guide**](docs/agent-install-guide.md) — enroll a Windows endpoint (with the real-world gotchas).
 - [Deployment scripts](infra/scripts/) — `deploy.sh` (one-shot), step scripts, `start`/`stop`/`teardown`.
 - [Architecture decisions](docs/decisions/) — ADRs recording the why behind key choices.
+- [Roadmap / backlog](docs/roadmap.md) — prioritized gaps (P0/P1/P2) for going beyond the POC.
 - [Executive briefing deck](presentation/) — exec-level pitch (PowerPoint) for the business case.
 
 ## Status
