@@ -12,7 +12,22 @@ FEIP="$(tf output -raw fleet_public_ip 2>/dev/null || true)"
 
 # DuckDNS is typically maxed at 5 domains, so default Fleet to <eip>.sslip.io.
 FLEET_HOSTNAME="${FLEET_HOSTNAME:-${FEIP}.sslip.io}"
-say "Fleet instance=$FIID  host=$FLEET_HOSTNAME"
+say "Fleet instance=$FIID  host=$FLEET_HOSTNAME  eip=$FEIP"
+
+# If using a DuckDNS hostname (and we have a token), point it at the Fleet EIP.
+case "$FLEET_HOSTNAME" in
+  *.duckdns.org)
+    if [ -n "${DUCKDNS_TOKEN:-}" ]; then
+      sub="${FLEET_HOSTNAME%.duckdns.org}"
+      say "Pointing DuckDNS '$sub' -> $FEIP"
+      r="$(curl -s "https://www.duckdns.org/update?domains=${sub}&token=${DUCKDNS_TOKEN}&ip=${FEIP}")"
+      [ "$r" = "OK" ] && ok "DuckDNS updated" || warn "DuckDNS update returned: $r"
+      sleep 5
+    else
+      warn "FLEET_HOSTNAME is DuckDNS but DUCKDNS_TOKEN unset — point $FLEET_HOSTNAME -> $FEIP manually."
+    fi ;;
+esac
+
 ssm_wait_online "$FIID"
 
 POL="$(base64 < "$SCRIPT_DIR/fleet-policies.yml" | tr -d '\n')"

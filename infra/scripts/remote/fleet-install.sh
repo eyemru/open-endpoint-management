@@ -9,6 +9,7 @@
 #   LE_EMAIL            Let's Encrypt registration email
 #   FLEET_POLICIES_B64  base64 of fleet-policies.yml
 set -uo pipefail
+export HOME=/root          # pin so fleetctl always uses /root/.fleet/config
 mkdir -p /opt/fleet/dl
 exec > >(tee /opt/fleet/install.log) 2>&1
 

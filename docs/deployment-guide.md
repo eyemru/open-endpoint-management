@@ -101,24 +101,63 @@ Each step is safe to re-run **except `40-install.sh`**, which assumes a fresh bo
 See **[agent-install-guide.md](agent-install-guide.md)** — create a Client + Site, generate
 the installer, and install the agent on Windows (including the `cmd`-vs-PowerShell gotcha).
 
-## 8. Operate (cost control)
+## 7b. Deploy Fleet (compliance plane) — second instance
 
-The instance costs ≈ **\$30/mo** running. Stop it between sessions:
+`10-provision.sh` (and `deploy.sh`) Terraform-creates **both** the TRMM and Fleet EC2
+instances. To stand up FleetDM and apply the compliance policies:
 
 ```bash
-./stop.sh     # halt compute (keeps data, EIP, DNS) — a few $/mo remain
-./start.sh    # resume — same EIP/DNS, SSM back in ~1-2 min, agents reconnect
+./fleet-deploy.sh        # Docker stack + TLS + fleetctl + CP-01..08 policies + fleetd MSI
 ```
+
+- Fleet's hostname defaults to **`<fleet-eip>.sslip.io`** (no DuckDNS slot needed). To use a
+  DuckDNS name instead, set `FLEET_HOSTNAME=<name>.duckdns.org` in `config.env`; if
+  `DUCKDNS_TOKEN` is set the script repoints it at the (new) Fleet EIP automatically.
+- Enroll the endpoint with the served fleetd MSI (`http://<FLEET_HOSTNAME>/fleet-osquery.msi`)
+  — see the agent guide's Fleet section. Install it via the **Windows GUI / `msiexec /qb`**,
+  not fully silent.
+- View pass/fail in **Fleet → Hosts → host → Policies**. (Per-host results are immediate;
+  Fleet's *fleet-wide aggregate* counts lag on a background cron.)
+
+## 8. Operate (cost control)
+
+**Two instances** run (TRMM + Fleet) ≈ **\$60/mo**. The lifecycle scripts act on **both** (by
+project tag):
+
+```bash
+./stop.sh     # halt compute on both (keeps data, EIPs, DNS) — a few $/mo remain
+./start.sh    # resume both — same EIPs/DNS, SSM back in ~1-2 min, agents reconnect
+```
+
+### Resume the next day (the common case)
+If you `stop.sh`'d (not torn down), bringing everything back is just:
+```bash
+cd infra/scripts && ./start.sh
+```
+TRMM (systemd) and Fleet (Docker `restart: unless-stopped`) auto-start on boot, so both UIs
+and both agents come back on their own — no re-install, no re-enroll. The one-time fleetd-MSI
+web server on Fleet's port 80 does **not** survive a stop (it's only needed for first
+download; not required afterward).
 
 ## 9. Teardown (remove all cost)
 
 ```bash
 ./teardown.sh        # confirm with 'destroy'   (or: ./teardown.sh -y)
 ```
-Runs `terraform destroy` (terminates the instance, deletes the EBS volume, releases the
-Elastic IP, removes the security group, IAM role/profile, and keypair), then sweeps for any
-leftover tagged resources. It does **not** touch DuckDNS or the endpoint agent — repoint/
-remove the DuckDNS record manually, and uninstall the agent per the agent guide.
+Runs `terraform destroy` (terminates **both instances**, deletes their EBS volumes, releases
+both Elastic IPs, removes the security groups, IAM role/profile, and keypair), then sweeps for
+any leftover tagged resources. It does **not** touch DuckDNS or the endpoint agents — repoint/
+remove DuckDNS records manually, and uninstall the agents per the agent guide.
+
+### Full rebuild from scratch (after teardown)
+```bash
+cd infra/scripts
+./deploy.sh          # provisions both instances + installs TRMM
+./fleet-deploy.sh    # installs Fleet on the (new) Fleet instance
+```
+Then re-enroll the endpoint(s) in both TRMM and Fleet (new agent installers). Note: a rebuild
+yields **new Elastic IPs**, so DuckDNS/sslip.io names update to the new IPs (automatic for
+sslip.io and for DuckDNS when `DUCKDNS_TOKEN` is set).
 
 ## 10. Troubleshooting (things we actually hit)
 
