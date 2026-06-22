@@ -35,6 +35,24 @@ aws sts get-caller-identity          # confirm AWS creds are active
 | `40-install.sh`   | local→SSM | Unattended Tactical RMM install (`remote/install-trmm.sh`) |
 | `50-verify.sh`    | local | Service health, HTTPS check, print login + 2FA secret |
 
+## Fleet (compliance plane — separate instance)
+
+`./10-provision.sh` (or `deploy.sh`) Terraform-creates **both** the TRMM and Fleet instances.
+Then deploy Fleet:
+
+```bash
+./fleet-deploy.sh     # Docker stack + TLS + fleetctl + policies + fleetd MSI  (~10-15 min)
+```
+
+| File | Where | Does |
+|---|---|---|
+| `fleet-deploy.sh` | local→SSM | Stand up FleetDM + apply policies + build/serve the fleetd MSI |
+| `remote/fleet-install.sh` | on box | The Fleet payload (Docker Compose: MySQL+Redis+Fleet) |
+| `fleet-policies.yml` | applied | CP-01…CP-08 compliance policies as code (`fleetctl apply`) |
+
+Fleet uses `<fleet-eip>.sslip.io` for DNS/TLS by default (DuckDNS is usually maxed at 5
+domains). Enroll the endpoint with the served fleetd MSI — see the agent guide's Fleet section.
+
 ## Lifecycle / cost control
 
 | Script | Does |

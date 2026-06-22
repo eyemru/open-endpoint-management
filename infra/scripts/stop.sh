@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
-# Stop the control-plane instance to halt compute charges (keeps data, EIP, DNS).
+# Stop ALL project instances (TRMM + Fleet) to halt compute charges.
 . "$(dirname "$0")/lib.sh"
-IID="$(get_iid)"; [ -n "$IID" ] || die "no instance in Terraform state"
-say "Stopping $IID ..."
-aws ec2 stop-instances --region "$AWS_REGION" --instance-ids "$IID" \
-  --query 'StoppingInstances[0].CurrentState.Name' --output text
-ok "Stopping. Compute charges halt; EBS (~\$2/mo) + EIP (~\$3.6/mo) remain. './start.sh' to resume."
+ids="$(aws ec2 describe-instances --region "$AWS_REGION" \
+  --filters "Name=tag:Project,Values=$PROJECT" \
+            "Name=instance-state-name,Values=running,pending" \
+  --query 'Reservations[].Instances[].InstanceId' --output text)"
+[ -n "$ids" ] || { ok "No running instances to stop."; exit 0; }
+say "Stopping: $ids"
+# shellcheck disable=SC2086
+aws ec2 stop-instances --region "$AWS_REGION" --instance-ids $ids \
+  --query 'StoppingInstances[].CurrentState.Name' --output text
+ok "Stopping. Compute charges halt; EBS + EIPs remain (a few \$/mo). './start.sh' to resume."

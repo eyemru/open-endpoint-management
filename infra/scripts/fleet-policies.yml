@@ -1,0 +1,75 @@
+# Compliance policies as code — applied to Fleet via `fleetctl apply -f`.
+# Mirrors docs/compliance-policies.md (CP-01..CP-08). Fleet convention: a policy
+# PASSES when its query returns >=1 row. Verify table/columns against your osquery
+# version if any policy errors. Re-apply after edits: fleetctl apply -f fleet-policies.yml
+apiVersion: v1
+kind: policy
+spec:
+  name: "CP-01 BitLocker enabled (OS volume)"
+  platform: windows
+  description: "OS volume must be encrypted with BitLocker."
+  resolution: "Enable BitLocker on C: with TPM and escrow the recovery key."
+  query: "SELECT 1 FROM bitlocker_info WHERE drive_letter = 'C:' AND protection_status = 1;"
+---
+apiVersion: v1
+kind: policy
+spec:
+  name: "CP-02 Microsoft Defender real-time protection on"
+  platform: windows
+  description: "Antivirus (Defender) reports healthy to Windows Security Center."
+  resolution: "Re-enable Defender real-time protection; update signatures."
+  query: "SELECT 1 FROM windows_security_center WHERE antivirus = 'Good';"
+---
+apiVersion: v1
+kind: policy
+spec:
+  name: "CP-03 Windows Firewall enabled"
+  platform: windows
+  description: "Windows Firewall reports healthy to Windows Security Center."
+  resolution: "Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled True"
+  query: "SELECT 1 FROM windows_security_center WHERE firewall = 'Good';"
+---
+apiVersion: v1
+kind: policy
+spec:
+  name: "CP-04 OS build is current or N-1"
+  platform: windows
+  description: "Windows build is a currently-supported (current or previous) release. Maintain the allowlist each Patch Tuesday."
+  resolution: "Apply the latest cumulative update via Tactical RMM."
+  query: "SELECT 1 FROM os_version WHERE build IN ('26100','22631','22621','19045');"
+---
+apiVersion: v1
+kind: policy
+spec:
+  name: "CP-05 Screen-lock timeout <= 15 minutes"
+  platform: windows
+  description: "Machine inactivity lock is set to 15 minutes or less."
+  resolution: "Set InactivityTimeoutSecs <= 900 via policy/GPO."
+  query: "SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\InactivityTimeoutSecs' AND CAST(data AS INTEGER) BETWEEN 1 AND 900;"
+---
+apiVersion: v1
+kind: policy
+spec:
+  name: "CP-06 Required EDR present"
+  platform: windows
+  description: "Approved endpoint protection (example: CrowdStrike) is installed."
+  resolution: "Deploy the corporate EDR agent."
+  query: "SELECT 1 FROM programs WHERE name LIKE '%CrowdStrike%' UNION ALL SELECT 1 FROM services WHERE name LIKE '%CSFalcon%';"
+---
+apiVersion: v1
+kind: policy
+spec:
+  name: "CP-07 User Account Control (UAC) enabled"
+  platform: windows
+  description: "UAC must be enabled to limit silent privilege escalation."
+  resolution: "Set EnableLUA = 1 and reboot."
+  query: "SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\EnableLUA' AND data = '1';"
+---
+apiVersion: v1
+kind: policy
+spec:
+  name: "CP-08 Disk free space >= 20 GB"
+  platform: windows
+  description: "C: has enough free space to receive updates."
+  resolution: "Free up disk space (Storage Sense / cleanmgr)."
+  query: "SELECT 1 FROM logical_drives WHERE device_id = 'C:' AND free_space > 21474836480;"

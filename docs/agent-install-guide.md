@@ -110,3 +110,34 @@ package/patch can lag a few minutes (or click refresh in the Software/Patches ta
    Set-Service wuauserv -StartupType Automatic; Start-Service wuauserv
    ```
 4. Optionally remove the Defender exclusions from step 4.
+
+---
+
+## 9. Enroll in Fleet (compliance) — the `fleetd` agent
+
+Fleet is the **second** agent (compliance/visibility), separate from the Tactical RMM agent.
+Its `fleetd` MSI is signed, so it installs cleanly (no Defender drama like the Mesh agent).
+
+1. **Download** the installer (built + served by the Fleet deploy). On the laptop:
+   ```powershell
+   Invoke-WebRequest "http://<FLEET_HOSTNAME>/fleet-osquery.msi" -OutFile "$env:USERPROFILE\Downloads\fleet-osquery.msi"
+   ```
+   (`<FLEET_HOSTNAME>` is the `<fleet-eip>.sslip.io` printed by `fleet-deploy.sh`.)
+2. **Install** (admin) — the MSI has the Fleet URL + enroll secret baked in:
+   ```powershell
+   msiexec /i "$env:USERPROFILE\Downloads\fleet-osquery.msi" /quiet
+   ```
+   Or double-click and approve UAC.
+3. Within ~1 minute the host appears in **Fleet → Hosts**, and the 8 compliance policies
+   (CP-01…CP-08) evaluate **pass/fail**.
+
+**Verify (server-side):** `fleetctl get hosts` and the Fleet UI policy view. On a Windows
+**Home** laptop, expect a realistic mix — e.g. Firewall/Defender/UAC/disk **pass**, BitLocker
+**fail** (Home has no managed BitLocker), screen-lock and EDR likely **fail**. That mix *is*
+the demo: real compliance gaps surfaced automatically.
+
+**Remove fleetd:** uninstall "Fleet osquery" / "fleetd" from Apps (or `msiexec /x`), and delete
+the host in Fleet.
+
+> The MSI is served by a one-time HTTP server on the Fleet box's port 80. It's only needed for
+> the initial download; it does not survive a reboot (and isn't needed after enrollment).
