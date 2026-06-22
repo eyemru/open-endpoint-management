@@ -26,6 +26,7 @@ We are building in two stages:
 
 - [Requirements & use cases](docs/requirements.md) — actors, use cases, functional/non-functional requirements, POC acceptance criteria.
 - [Design document](docs/design.md) — architecture, components, AWS topology, POC plan.
+- [**Architecture & data flow (detailed)**](docs/architecture.md) — every component, ports, and end-to-end flows.
 - [Compliance policy catalog](docs/compliance-policies.md) — per-policy osquery queries + remediation specs.
 - [Infrastructure & setup plan](docs/infrastructure.md) — AWS network, instance sizing, DNS/TLS, install runbooks (M0–M1).
 - [**Deployment guide**](docs/deployment-guide.md) — repeatable step-by-step + automated deploy/teardown of the control plane.
