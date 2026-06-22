@@ -3,7 +3,7 @@
 #
 # Strategy: the official installer is interactive and refuses to run as root, and its
 # Let's Encrypt path uses an interactive wildcard DNS-01 challenge. So we:
-#   1) reuse the cert already obtained by 01-get-cert.sh (HTTP-01),
+#   1) reuse the cert already obtained by get-cert.sh (HTTP-01),
 #   2) run the installer AS the `ubuntu` user via `expect`, which allocates a PTY and
 #      answers every prompt (domains, --use-own-cert paths, admin login + Django getpass).
 #
