@@ -31,7 +31,8 @@ We are building in two stages:
 - [Infrastructure & setup plan](docs/infrastructure.md) — AWS network, instance sizing, DNS/TLS, install runbooks (M0–M1).
 - [**Deployment guide**](docs/deployment-guide.md) — repeatable step-by-step + automated deploy/teardown of the control plane.
 - [**Agent install guide**](docs/agent-install-guide.md) — enroll a Windows endpoint (with the real-world gotchas).
-- [Deployment scripts](infra/scripts/) — `deploy.sh` (one-shot), step scripts, `start`/`stop`/`teardown`.
+- [Deployment scripts — AWS](infra/scripts/) — `deploy.sh` (one-shot), step scripts, `start`/`stop`/`teardown`.
+- [Deployment kit — on-prem](onprem/) — run the same stack on your own Ubuntu/Debian servers (no AWS/Terraform/SSM).
 - [Architecture decisions](docs/decisions/) — ADRs recording the why behind key choices.
 - [Roadmap / backlog](docs/roadmap.md) — prioritized gaps (P0/P1/P2) for going beyond the POC.
 - [Executive briefing deck](presentation/) — exec-level pitch (PowerPoint) for the business case.
