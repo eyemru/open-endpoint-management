@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Install Tactical RMM on THIS server (Ubuntu 22.04/Debian 12). Run as root: sudo ./install-trmm.sh
+# Install Tactical RMM on THIS server (Ubuntu 22.04/Debian 12). Run as root: sudo ./10-install-trmm.sh
 # No AWS / Terraform / SSM — pure on-prem. Cert via get-cert.sh (CERT_MODE in config.env).
 set -uo pipefail
 SD="$(cd "$(dirname "$0")" && pwd)"
-[ "$(id -u)" -eq 0 ] || { echo "run as root: sudo ./install-trmm.sh"; exit 1; }
+[ "$(id -u)" -eq 0 ] || { echo "run as root: sudo ./10-install-trmm.sh"; exit 1; }
 . "$SD/config.env"
 
 ROOT="${TRMM_ROOT:?set TRMM_ROOT}"; API="api.$ROOT"; RMM="rmm.$ROOT"; MESH="mesh.$ROOT"

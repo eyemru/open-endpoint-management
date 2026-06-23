@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Sanity-check an on-prem server before installing. Run as root: sudo ./preflight.sh
+# Sanity-check an on-prem server before installing. Run as root: sudo ./00-preflight.sh
 set -uo pipefail
 SD="$(cd "$(dirname "$0")" && pwd)"
 [ -f "$SD/config.env" ] && . "$SD/config.env" || { echo "copy config.env.example -> config.env first"; exit 1; }

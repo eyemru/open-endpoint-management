@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Install FleetDM on THIS server (Docker Compose). Run as root: sudo ./install-fleet.sh
+# Install FleetDM on THIS server (Docker Compose). Run as root: sudo ./20-install-fleet.sh
 # No AWS — pure on-prem. Cert via get-cert.sh (CERT_MODE). Port configurable for co-hosting.
 set -uo pipefail
 SD="$(cd "$(dirname "$0")" && pwd)"
-[ "$(id -u)" -eq 0 ] || { echo "run as root: sudo ./install-fleet.sh"; exit 1; }
+[ "$(id -u)" -eq 0 ] || { echo "run as root: sudo ./20-install-fleet.sh"; exit 1; }
 . "$SD/config.env"
 : "${FLEET_HOSTNAME:?}"; : "${FLEET_ADMIN_EMAIL:?}"; : "${FLEET_ADMIN_PASS:?}"
 H="$FLEET_HOSTNAME"; PORT="${FLEET_HTTPS_PORT:-443}"

@@ -25,6 +25,29 @@ plumbing. What AWS used to provide is now configurable: **TLS cert acquisition**
 - **Open inbound ports:** `443` (agents + UI) and, for Let's Encrypt, `80` during issuance.
 - **Endpoints** can reach the server hostnames on 443.
 
+## 1b. Do I need to carry any binaries / a web server / a JVM?
+
+**No binaries to pre-stage, and no JVM or web server to pre-install.** Bring just *this
+folder* — the scripts pull every open-source component themselves at runtime (so the server
+needs **internet access**; this is **not** an air-gapped setup):
+
+| Component | Where the script gets it | Notes |
+|---|---|---|
+| TRMM + all its deps | official installer from `github.com/amidaware` | the installer apt-installs/builds everything below |
+| **nginx (web server)** | installed *by* the TRMM installer | **Do not pre-install a web server** — and keep 80/443 free (preflight checks this). |
+| Python 3.11, Node.js, PostgreSQL, Redis, NATS, MeshCentral | installed by the TRMM installer | brought in automatically |
+| Docker engine | `get.docker.com` | for Fleet |
+| Fleet + MySQL + Redis | Docker Hub images (`fleetdm/fleet`, `mysql`, `redis`) | run as containers |
+| `fleetctl`, `certbot` | GitHub release / apt | helpers |
+| **fleetd MSI** | *built on the server* by `fleetctl` | this is an **output** (for your endpoints), not a prereq |
+
+**No JVM / Java anywhere** — the stack is Python (Django) + Go (TRMM agent, Fleet) + Node.js
+(MeshCentral) + Postgres/MySQL/Redis/NATS. If a security review asks "what's the runtime
+footprint," that's the list — no Tomcat/Java.
+
+> **Air-gapped servers?** Then you *would* need to mirror these sources internally (apt repo,
+> a Docker registry, the GitHub artifacts) — a separate, larger effort not covered here.
+
 ## 2. The cert decision (`CERT_MODE`) — read this first
 
 On-prem servers often aren't internet-reachable, so pick the cert mode in `config.env`:
@@ -41,27 +64,31 @@ On-prem servers often aren't internet-reachable, so pick the cert mode in `confi
   no port contention.
 - **One server (co-host):** both want `:443`. Set **`FLEET_HTTPS_PORT=8443`** in `config.env`
   so Fleet uses a different port (its URL/agents become `https://fleet.<root>:8443`). Run
-  `install-trmm.sh` first, then `install-fleet.sh`.
+  `10-install-trmm.sh` first, then `20-install-fleet.sh`.
 
-## 4. Steps
+## 4. Files & run order
 
-On each server:
+Scripts are numbered like the AWS kit. **You run the `NN-*` scripts**; the others are
+supporting files they call automatically.
+
+| File | Run? | What |
+|---|---|---|
+| `00-preflight.sh` | ✅ run first (each server) | checks OS/RAM/ports/DNS/internet |
+| `10-install-trmm.sh` | ✅ on the TRMM server | installs Tactical RMM |
+| `20-install-fleet.sh` | ✅ on the Fleet server | installs FleetDM + policies + builds fleetd MSI |
+| `get-cert.sh` | helper (auto-called) | obtains/installs the TLS cert per `CERT_MODE` |
+| `fleet-policies.yml` | data (auto-applied) | the CP-01…08 compliance policies |
+| `config.env` | you create + edit | your settings/secrets (gitignored) |
+
 ```bash
-# 1. copy this folder to the server (scp/git), then:
+# copy this folder to the server (scp/git), then on each server:
 cd onprem
 cp config.env.example config.env && $EDITOR config.env   # set CERT_MODE, hostnames, passwords
 chmod +x *.sh
 
-# 2. sanity check (OS, RAM, ports free, DNS resolves here, internet)
-sudo ./preflight.sh
-
-# 3a. on the TRMM server  (~15-30 min)
-sudo ./install-trmm.sh
-#     -> prints the TRMM URL + how to fetch the 2FA secret
-
-# 3b. on the Fleet server  (~10-15 min)
-sudo ./install-fleet.sh
-#     -> prints the Fleet URL, enroll secret, and the fleetd MSI path
+sudo ./00-preflight.sh        # sanity check (OS, RAM, free ports, DNS resolves here, internet)
+sudo ./10-install-trmm.sh     # on the TRMM server  (~15-30 min) -> prints URL + 2FA hint
+sudo ./20-install-fleet.sh    # on the Fleet server (~10-15 min) -> prints URL, enroll secret, MSI path
 ```
 Logs stream to `/opt/epm/trmm-install.log` and `/opt/fleet/install.log`.
 
