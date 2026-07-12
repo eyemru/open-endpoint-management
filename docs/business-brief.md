@@ -50,9 +50,10 @@ Two parts: a small **central system** (servers) and a **lightweight agent** on e
 | **Management server** (Tactical RMM) | "Fix it" | Pushes patches/software, runs maintenance, provides remote IT support. IT staff use a web dashboard. |
 | **Compliance server** (FleetDM) | "Prove it" | Continuously checks each device against our security policy and reports pass/fail. Web dashboard for IT/security. |
 
-- Each is a modest Linux server (≈ 2 CPU / 4 GB RAM). They run **wherever we prefer** —
-  existing on-premises hardware, new hardware, or a cloud account (AWS/Azure/GCP) if we
-  operate one. **No specific cloud is required or assumed.**
+- These run on standard Linux servers **sized to the fleet** — a modest VM for a pilot;
+  larger, and **run in duplicate for high availability**, at full scale. They can live on
+  **existing on-premises hardware, new hardware, or a cloud account (AWS/Azure/GCP) if we
+  operate one** — **no specific cloud is required or assumed.**
 - Access is over encrypted web (HTTPS). Only IT/security staff log in.
 
 ### 3b. On each Windows computer — lightweight agents
@@ -111,23 +112,24 @@ operate. It does **not** go to a third-party vendor's cloud.
 
 ## 6. Deployment options and cost
 
-**Software licensing:** the tools are open-source — **$0 in per-device license fees** (a
-commercial equivalent typically runs **$3–7 per device per month** — roughly **$18k–42k/year
-for 500 devices**; figures illustrative).
+**Software licensing:** the tools are open-source — **$0 in per-device license fees**. A
+commercial equivalent typically runs **$3–7 per device per month**; at **~10,000 devices**
+that is roughly **$360,000–$840,000 per year** (illustrative). This is the largest, most
+certain saving — and because commercial pricing is per-device while our cost is
+infrastructure-based, **the savings gap widens as the fleet grows**.
 
-**Where it runs is our choice** — the system needs only **two standard Linux servers**
-(≈ 2 CPU / 4 GB RAM each) and does **not** depend on any particular cloud. We do **not** need
-an existing cloud account:
+**Infrastructure cost depends on scale and high availability**, so it needs a short **sizing
+exercise** — there is no single flat number. Rough, illustrative order-of-magnitude:
 
-| Hosting option | Approx. infrastructure cost | Notes |
-|---|---|---|
-| **Repurpose existing on-prem servers/VMs** | ~**$0 additional** | If we have spare capacity; everything stays in our datacenter. |
-| **New on-prem hardware** | one-time hardware cost | If dedicated servers are preferred. |
-| **A cloud account — *only if we already operate one*** (AWS/Azure/GCP) | ~**$60–100/month** | Fastest to stand up, no hardware to buy; optional, not assumed. |
+| Stage | Footprint | Approx. infrastructure cost | Notes |
+|---|---|---|---|
+| **Proof of concept** (what we built) | 2 small VMs, no redundancy, 1–2 devices | ~**$60–100/month** in cloud (≈ $0 on spare hardware) | Validation only — **not** a production figure. |
+| **Production · ~10,000 devices · highly available** | Redundant app servers + resilient database + cache + load balancer | **rough order-of-magnitude ~$1,500–$3,500+/month** in cloud, or equivalent on-prem compute | Varies with HA level, data retention, and management-tool sizing — **requires formal sizing**. |
 
-**Key point:** cost is essentially **flat** whether we manage 50 or 500 devices — it doesn't
-scale per-device like commercial licensing. The main ongoing investment is a modest amount of
-**existing IT staff time**.
+**Why a range, not a number:** high availability means running components in duplicate (no
+single point of failure) with a resilient database and a load balancer — real but modest cost.
+Even at the high end, it remains a **small fraction** of commercial per-device licensing at the
+same scale. Main ongoing non-infrastructure cost: a modest amount of **existing IT staff time**.
 
 ---
 
@@ -136,12 +138,13 @@ scale per-device like commercial licensing. The main ongoing investment is a mod
 | Phase | Scope | Rough duration | Goal |
 |---|---|---|---|
 | **1. Proof of concept** ✅ done | 1–2 test devices | (complete) | Prove the full loop works |
-| **2. Pilot** | ~50 devices across teams | 2–4 weeks | Validate at scale; tune policies |
-| **3. Fleet rollout** | All ~500 devices | Phased, weeks | Full coverage + reporting |
+| **1b. Sizing & HA design** | — | ~1 week | Size servers/DB for ~10k devices + high availability |
+| **2. Pilot** | ~50–100 devices across teams | 2–4 weeks | Validate at scale; tune policies |
+| **3. Fleet rollout** | All managed devices (**~10,000**) | Phased, weeks–months | Full coverage + reporting |
 
 **What the program needs from the organization:**
 - A decision on **where to host** — existing on-prem servers, new hardware, or a cloud account
-  if we operate one (the system needs two small Linux servers; no cloud is required).
+  if we operate one (no cloud is required; server sizing comes from Phase 1b).
 - **DNS names** for the servers and the ability to issue certificates.
 - A **pilot group** of devices/users and an **approved maintenance window** policy.
 - Sign-off to **deploy the agents** to managed devices (typically via existing software-
@@ -159,7 +162,8 @@ scale per-device like commercial licensing. The main ongoing investment is a mod
 | **Central system is high-value** | It can act on every endpoint; mitigated by locking down admin access, MFA, and auditing (treated as critical infrastructure). |
 | **Internet required (standard install)** | Servers pull software from the internet during setup. An isolated/air-gapped deployment is possible but is additional work. |
 | **Endpoint agent privilege** | System-level by necessity (to patch); governed and audited. |
-| **Production hardening** | Backups, high availability, and automated patch policies are planned items beyond the pilot. |
+| **Scale & high availability (~10k devices)** | Requires a sizing exercise (Phase 1b). The **compliance** component scales out easily to tens of thousands; the **management** component should be load-tested at target scale and may run as **multiple instances** (e.g., split by region/business unit). Infrastructure cost grows with scale + HA (see §6). |
+| **Production hardening** | Backups, high availability, monitoring, and automated patch policies are planned items beyond the pilot. |
 
 ---
 
