@@ -24,7 +24,8 @@ We are building in two stages:
 
 ## Docs
 
-- [**Business & technical brief**](docs/business-brief.md) — 4–5 page overview for PMs/TPMs/department leads (what's deployed, what the business gets, data/cost/rollout).
+- [**Business brief**](docs/business-brief.md) — high-level overview for department leads (what's deployed, what the business gets, data/cost/rollout).
+- [**Implementation & rollout plan**](docs/implementation-plan.md) — how we execute: phases, enrollment tracks, sizing/HA, environment assessment (PM/TPM + technical leads).
 - [Requirements & use cases](docs/requirements.md) — actors, use cases, functional/non-functional requirements, POC acceptance criteria.
 - [Design document](docs/design.md) — architecture, components, AWS topology, POC plan.
 - [**Architecture & data flow (detailed)**](docs/architecture.md) — every component, ports, and end-to-end flows.

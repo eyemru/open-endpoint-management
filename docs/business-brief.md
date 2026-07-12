@@ -121,10 +121,13 @@ infrastructure-based, **the savings gap widens as the fleet grows**.
 **Infrastructure cost depends on scale and high availability**, so it needs a short **sizing
 exercise** — there is no single flat number. Rough, illustrative order-of-magnitude:
 
-| Stage | Footprint | Approx. infrastructure cost | Notes |
-|---|---|---|---|
-| **Proof of concept** (what we built) | 2 small VMs, no redundancy, 1–2 devices | ~**$60–100/month** in cloud (≈ $0 on spare hardware) | Validation only — **not** a production figure. |
-| **Production · ~10,000 devices · highly available** | Redundant app servers + resilient database + cache + load balancer | **rough order-of-magnitude ~$1,500–$3,500+/month** in cloud, or equivalent on-prem compute | Varies with HA level, data retention, and management-tool sizing — **requires formal sizing**. |
+| Stage | Hosted in a cloud we operate | Hosted on our own servers (on-prem) |
+|---|---|---|
+| **Proof of concept** (what we built) | ~**$60–100/month** (2 small VMs) | ≈ **$0** on spare capacity |
+| **Production · ~10,000 devices · highly available** | rough order-of-magnitude **~$1,500–$3,500+/month** | ≈ **$0 additional** if repurposing spare virtualization capacity, or a **~$15k–40k one-time** hardware outlay for dedicated servers (+ modest power/maintenance) |
+
+*(Illustrative, not quotes — production figures come from the sizing exercise. Cost varies with
+the level of high availability, data retention, and management-tool sizing.)*
 
 **Why a range, not a number:** high availability means running components in duplicate (no
 single point of failure) with a resilient database and a load balancer — real but modest cost.
@@ -144,16 +147,16 @@ same scale. Main ongoing non-infrastructure cost: a modest amount of **existing 
 | **5. Scale-up** | the **existing** fleet, toward **~10,000** total | phased, months | Push agents to in-service machines; full coverage + reporting |
 
 ### How devices are enrolled — two paths
-- **New machines (the ~1,000, and future purchases): zero-touch.** The agents are
-  **pre-installed and pre-configured in the standard build/gold image**, so a computer
-  **enrolls itself automatically the first time it powers on** — no per-device manual work,
-  no desk visit. This is the fastest, lowest-effort path and the target for all new assets.
-- **Existing in-service machines:** onboarded in **controlled waves** using whatever
-  software-distribution capability is available (e.g., Active Directory Group Policy, Intune,
-  SCCM). **If no such tooling exists today** — which is common, and part of *why* this program
-  is needed — we plan a **lightweight bootstrap** (an AD login script, a one-time guided/self-
-  service installer, or IT-assisted waves for smaller batches). Assessing what's actually in
-  place is an early rollout task, not an assumption.
+- **New machines:** they arrive **ready to manage** — the software is built into our standard
+  computer image, so a new machine registers itself the first time it's turned on (no manual
+  setup, no desk visit). This is the ~1,000-machine milestone and the model for all future
+  purchases.
+- **Existing machines:** onboarded gradually, in **controlled waves**. The method depends on
+  the tools we already have; **if we have none today, setting up a simple way to distribute
+  the software is an early step** — not something we assume is already in place.
+
+*Execution detail (imaging, distribution methods, and the assessment behind them) lives in the
+[Implementation & Rollout Plan](implementation-plan.md), so this brief stays high-level.*
 
 **What the program needs from the organization:**
 - A decision on **where to host** — existing on-prem servers, new hardware, or a cloud account
@@ -176,8 +179,8 @@ same scale. Main ongoing non-infrastructure cost: a modest amount of **existing 
 | **Central system is high-value** | It can act on every endpoint; mitigated by locking down admin access, MFA, and auditing (treated as critical infrastructure). |
 | **Internet required (standard install)** | Servers pull software from the internet during setup. An isolated/air-gapped deployment is possible but is additional work. |
 | **Endpoint agent privilege** | System-level by necessity (to patch); governed and audited. |
-| **Scale & high availability (~10k devices)** | Requires a sizing exercise (Phase 1b). The **compliance** component scales out easily to tens of thousands; the **management** component should be load-tested at target scale and may run as **multiple instances** (e.g., split by region/business unit). Infrastructure cost grows with scale + HA (see §6). |
-| **Reaching existing machines** | We should **not assume** central software-distribution tooling (GPO/Intune/SCCM) already exists — its absence is often why this program is needed. Onboarding the existing fleet may require a **bootstrap** (login script / one-time or self-service install); a short assessment of current tooling is an early task. New machines (zero-touch imaging) don't depend on this. |
+| **Scale & high availability (~10k)** | Servers must be sized and made redundant for the full fleet — a planning task before scale-up. One component scales easily; the other must be validated at that scale and may run in several parts. Cost grows with scale + HA (see §6). *Detail: Implementation Plan / design.* |
+| **Reaching existing machines** | We do **not assume** central software-distribution tooling already exists — its absence is often *why* this program is needed. Onboarding existing devices may require first setting up a simple way to distribute the software; this is assessed early. New machines (built ready-to-manage) are unaffected. |
 | **Production hardening** | Backups, high availability, monitoring, and automated patch policies are planned items beyond the pilot. |
 
 ---
@@ -193,6 +196,7 @@ same scale. Main ongoing non-infrastructure cost: a modest amount of **existing 
 
 **Further reading (in this project)**
 - Executive slide deck — `presentation/` (for a live briefing).
+- **How we execute it — `docs/implementation-plan.md`** (phases, enrollment, sizing, assessment).
 - Technical design & detailed architecture — `docs/design.md`, `docs/architecture.md`.
 - What's built vs. still planned — `docs/roadmap.md`.
 
