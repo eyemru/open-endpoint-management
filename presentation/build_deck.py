@@ -191,11 +191,11 @@ s = slide()
 bg(s)
 topbar(s, "Current state", "Where we stand today")
 items = [
-    ("~500 Windows devices — roughly 350 in-office desktops and 150 laptops that leave the building.", 0),
+    ("~10,000 Windows devices across the organization — desktops in offices and laptops in the field.", 0),
     ("Patching is manual and inconsistent — no guarantee a laptop in the field is up to date.", 0),
     ("No central inventory — we can't quickly say who has what, or its security status.", 0),
     ("Compliance evidence is a fire drill — assembled by hand each time an audit asks.", 0),
-    ("No budget for commercial tools — Intune, Tanium, and the like are priced per device.", 0),
+    ("Commercial tools are priced per device — at this scale, that's six figures a year.", 0),
 ]
 tb, tf = textbox(s, Inches(0.95), Inches(1.9), Inches(11.4), Inches(4.5))
 bullets(tf, items, size=18, gap=16)
@@ -420,17 +420,17 @@ s = slide()
 bg(s)
 topbar(s, "The economics", "A fraction of the commercial cost")
 
-# Three options: commercial vs. this solution on AWS vs. this solution on-prem
+# Three options at ~10,000 devices: commercial licensing vs. our infra (hosted / on-prem)
 options = [
     ("Commercial tools", RED, "$3–7 / device / mo", RED,
-     ["~500 devices  ≈", "$18,000–42,000 / year",
-      "Ongoing per-seat fees,", "rising as we grow."]),
-    ("This solution — AWS", TEAL, "~$100 / month", TEAL,
-     ["≈ $1,200 / year", "+ existing IT staff time",
-      "No per-seat fees;", "scales to 500+ at flat cost."]),
-    ("This solution — on-prem", GREEN, "$0 hosting", GREEN,
-     ["Repurpose a server", "we already own",
-      "No new hardware or licensing", "— just our IT staff time."]),
+     ["~10,000 devices  ≈", "$360k–$840k / year",
+      "per-seat, forever;", "grows with the fleet."]),
+    ("This solution — hosted", TEAL, "~$1.5–3.5k / mo", TEAL,
+     ["≈ $18k–42k / year", "at 10k, highly available",
+      "No per-seat fees;", "needs a sizing pass."]),
+    ("This solution — on-prem", GREEN, "$0 licensing", GREEN,
+     ["Runs on our own", "servers / VMs",
+      "No cloud required;", "just compute + IT time."]),
 ]
 cx0, cw, cgap = Inches(0.6), Inches(3.8), Inches(0.36)
 cy0, ch = Inches(2.05), Inches(3.75)
@@ -448,16 +448,16 @@ for i, (title, ac, head, hc, subs) in enumerate(options):
 
 tb, tf = textbox(s, Inches(0.6), Inches(6.0), Inches(12.1), Inches(0.9))
 setpara(tf.paragraphs[0],
-        "Illustrative figures. We trade software licensing cost for a modest amount of our "
-        "own IT time — and we keep full control of our data. Repurposing existing on-prem "
-        "hardware removes even the hosting cost.",
+        "Illustrative figures at ~10,000 devices — not quotes; production cost needs a sizing "
+        "pass. Commercial pricing is per-device (six figures/yr, forever); ours is "
+        "infrastructure-based, so the gap widens as we grow. Data stays in-house either way.",
         13, color=GRAY)
 footer(s, num())
-notes(s, "Three ways to pay for this. The numbers are illustrative ranges, not quotes. "
-         "Option 3 is the kicker for a cost-conscious board: if we have a server with spare "
-         "capacity, hosting is effectively free — we only spend a little internal time. "
-         "Even on AWS, we're an order of magnitude below commercial per-seat pricing, and "
-         "in every case the data stays in-house.")
+notes(s, "Reframe for ~10k with high availability. The commercial line is per-seat and "
+         "enormous at scale (~$360-840k/yr). Our cost is infrastructure — even highly "
+         "available it's ~$18-42k/yr, and it does NOT scale per-device, so the savings gap "
+         "widens as the fleet grows. Numbers are illustrative ranges pending a formal sizing "
+         "exercise; be honest about that if pressed.")
 
 # ===========================================================================
 # 11. PHASED, LOW-RISK APPROACH
@@ -466,12 +466,12 @@ s = slide()
 bg(s)
 topbar(s, "The plan", "A low-risk, phased rollout")
 phases = [
-    ("Phase 1", "Proof of Concept", "4–6 weeks", "2 test laptops. Prove the full loop: "
-     "see, prove, fix. Near-zero cost.", BLUE),
-    ("Phase 2", "Pilot", "1–2 months", "~50 real devices across teams. Validate at scale "
-     "and refine our policies.", TEAL),
-    ("Phase 3", "Fleet rollout", "Phased", "Roll out to all ~500 devices, group by group, "
-     "with full reporting.", GREEN),
+    ("Phase 1", "Pilot", "2–4 weeks", "50 devices. Validate the full loop end to end and "
+     "tune our security policies. (POC already proven.)", BLUE),
+    ("Phase 2", "First milestone", "Phased", "~1,000 newly acquired computers, shipped "
+     "agent-ready — zero-touch, enrolled on first boot.", TEAL),
+    ("Phase 3", "Scale to fleet", "Phased, months", "Onboard existing devices in waves, "
+     "toward ~10,000 total, with full reporting.", GREEN),
 ]
 x = Inches(0.85)
 w = Inches(3.75)

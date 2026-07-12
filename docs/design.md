@@ -9,10 +9,11 @@ functional/non-functional requirements this design satisfies (with a traceabilit
 
 ## 1. Purpose & context
 
-A small organization (think ~500 assets — in-office desktops and roaming laptops) runs
-Windows 10 and Windows 11. They cannot fund commercial endpoint-management tooling
-(Intune, Tanium, PDQ, etc.) and want an **open-source** system they can self-host on a
-local server, on-prem, or in AWS.
+An organization managing a large Windows 10/11 fleet — **~10,000 assets ultimately** (desktops
+and roaming laptops), phased in via a 50-device pilot, a ~1,000 new-machine milestone, then the
+existing fleet. They cannot fund commercial endpoint-management tooling (Intune, Tanium, PDQ —
+per-device, six figures/year at this scale) and want an **open-source** system they self-host
+on-prem or in a cloud they operate.
 
 The system must:
 
@@ -33,16 +34,17 @@ security considerations, and a phased proof-of-concept (POC) plan.
 - Hostable on AWS for the POC; portable to on-prem later.
 - A clear, low-risk POC provable on **2 test endpoints**.
 
-**Non-goals (for now)**
+**Non-goals for the initial POC** (all are program goals for later phases — see §13, roadmap):
 - macOS / Linux endpoint management (the tools support it; out of POC scope).
-- Full MDM lifecycle (enrollment-from-zero-touch, device wipe, DEP/Autopilot).
-- Production-grade HA, multi-region, or scale tuning. POC targets correctness, not scale.
+- Full MDM lifecycle (device wipe, DEP/Autopilot).
+- Production HA + scale-out to ~10k, and **zero-touch enrollment via gold-image pre-install**
+  (the ~1,000 new-machine milestone). The POC targets correctness on a thin slice, not scale.
 
 ## 3. Key constraints
 
 | Constraint | Implication |
 |---|---|
-| ~500 mixed desktops + laptops | Agent-based, **phone-home over HTTPS** — never rely on reaching a device directly. |
+| ~10,000 desktops + laptops (phased) | Agent-based, **phone-home over HTTPS**; at scale Fleet scales out horizontally and the management plane may run as multiple instances (see §13). |
 | Windows 10 & 11 only (POC) | Use the Windows Update Agent API + Chocolatey for patching/software. |
 | Open-source only | FleetDM (MIT core), osquery (Apache-2.0), Tactical RMM (source-available — see §9). |
 | No budget for tooling | Self-host on a single modest EC2 / VM to start. |
@@ -206,3 +208,19 @@ When the assembled system has taught us the requirements, build:
 
 The Stage 1 work is not throwaway: osquery query library, compliance policy definitions,
 patch/maintenance-window logic, and the AWS/Terraform topology all carry forward.
+
+## 14. Scaling to ~10,000 & enrollment at scale
+
+- **Compliance plane (Fleet):** scales horizontally — multiple stateless Fleet app nodes
+  behind a load balancer, with a managed MySQL + Redis. Comfortable into the tens of thousands.
+- **Management plane (Tactical RMM):** chosen for a ~500-device org; at ~10k it must be
+  **load-tested and likely run as multiple instances** (e.g., sharded by region/business unit),
+  or re-evaluated. This is the key scale risk to validate early.
+- **High availability:** run components in duplicate (no single point of failure) with a
+  resilient database and cache; adds modest cost. Production sizing is a defined phase (see
+  requirements NFR-1 and the roadmap).
+- **Enrollment at scale — two tracks:** (A) **new machines** get agents **pre-installed in the
+  gold/build image** and enroll zero-touch on first boot (the ~1,000 new-machine milestone;
+  imaging must not capture an already-enrolled identity — enroll on first boot for unique ids);
+  (B) **existing machines** are onboarded by pushing agents via GPO / Intune / SCCM / PDQ.
+  Details in [agent-install-guide.md](agent-install-guide.md) §10 and [roadmap.md](roadmap.md).

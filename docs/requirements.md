@@ -12,12 +12,13 @@ the POC, without the ceremony of a formal SRS.
 
 ## 1. Grounding scenario
 
-> **Northbridge Community Bank** is a ~400-person regional bank. IT is a small team: one IT
-> manager, two endpoint/desktop engineers, and a part-time security/compliance officer.
-> They run **~500 Windows assets** — ~350 in-office desktops (Windows 10/11) and ~150
-> laptops that staff take home and to branch offices. There is no budget for Intune,
-> Tanium, or PDQ. Today, patching is manual and inconsistent, nobody can answer "is every
-> laptop encrypted and up to date?" quickly, and audits are a fire drill of spreadsheets.
+> **Northbridge Community Bank** is a regional bank with staff across many branches. The
+> ultimate goal is to manage **~10,000 Windows assets** (Windows 10/11 desktops and roaming
+> laptops), reached in phases: a **50-device pilot**, then a first milestone of **~1,000
+> newly acquired computers** (shipped agent-ready), then onboarding the **existing fleet**.
+> Commercial suites (Intune, Tanium, PDQ) are priced per device — six figures/year at this
+> scale. Today, patching is manual and inconsistent, nobody can answer "is every laptop
+> encrypted and up to date?" quickly, and audits are a fire drill of spreadsheets.
 
 The bank needs to (a) **know** the state of every device, (b) **prove** compliance for
 audits, and (c) **fix** drift — patch and configure devices — including laptops that are
@@ -53,6 +54,8 @@ realize it.
 | **UC-11** | **Remediate a roaming/offline laptop** — queue work; it applies next time the device phones home. | System | Phone-home pull model (§3, §6) |
 | **UC-12** | **Decommission a device** — retire an asset, stop counting it, revoke access. | Engineer | Lifecycle (FR-E group, §6) |
 | **UC-13** | **Produce an audit report** — export fleet compliance evidence for a point in time. | Compliance Officer | Fleet reporting/API (§7, NFR auditability) |
+| **UC-14** | **Zero-touch enroll a NEW machine** — a newly imaged computer enrolls itself on first boot (agents pre-installed in the build image). | System / Engineer | Gold-image pre-install; first-boot enrollment (roadmap Track A) |
+| **UC-15** | **Bulk-enroll EXISTING machines** — push agents to in-service devices in waves. | Engineer | GPO / Intune / SCCM / PDQ (roadmap Track B) |
 
 ## 4. Functional requirements
 
@@ -100,7 +103,7 @@ realize it.
 
 | ID | Requirement | Rationale / target |
 |---|---|---|
-| **NFR-1 Scale** | Support ~500 endpoints. | POC proves on 2; design must not preclude 500. → §3 |
+| **NFR-1 Scale** | Support **~10,000 endpoints** (ultimate goal), phased: pilot 50 → ~1,000 new → existing fleet. | POC proved on 1; production needs sizing + HA. Fleet scales out; the management plane may run as multiple instances at 10k. → §3, roadmap |
 | **NFR-2 Roaming** | Work for laptops off the corporate network — **outbound 443 only**, no inbound/VPN to the device. | Core constraint. → §3, §6, UC-11 |
 | **NFR-3 Security** | TLS everywhere; protect enrollment secrets; lock down SYSTEM-privileged agents and admin UIs; encrypt data at rest/in transit. | Bank context. → §9 |
 | **NFR-4 Self-hostable / portable** | Run on AWS for POC; portable to on-prem. | Stated constraint. → §10 |
@@ -139,9 +142,14 @@ The POC (design §11) is **done** when, against **2 test endpoints**:
 
 ## 8. Out of scope (POC)
 
-macOS/Linux endpoints · zero-touch/Autopilot enrollment · device wipe · production HA &
-scale tuning · automated policy→remediation orchestration (manual hand-off is fine for POC).
+macOS/Linux endpoints · full MDM lifecycle / device wipe · production HA & scale tuning ·
+automated policy→remediation orchestration (manual hand-off is fine for POC).
 See design §2 non-goals.
+
+> **In scope for the program (post-POC):** production HA + scale to ~10k, and **zero-touch
+> enrollment of new machines** via agents pre-installed in the gold/build image (the ~1,000
+> new-computer milestone — see UC-14 and §7 rollout). These are program goals, just not part
+> of the initial thin-slice POC.
 
 ---
 
