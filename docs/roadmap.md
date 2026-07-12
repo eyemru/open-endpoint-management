@@ -7,8 +7,9 @@ issue-ready — convert to GitHub issues when the repo is pushed (titles map 1:1
 enroll + inventory, remote command, software deploy (Chocolatey), security patch push (TRMM),
 and compliance pass/fail across CP-01…CP-08 (Fleet). All six acceptance criteria in
 [requirements.md](requirements.md) §7 met. Infra is reproducible from `infra/` and was torn
-down after the review to stop AWS cost. The items below take it from "working POC" toward
-"runnable for ~500 endpoints."
+down after the review to stop AWS cost. The items below take it from "working POC" toward the
+program goal of **~10,000 endpoints** (pilot 50 → ~1,000 newly acquired machines → existing
+fleet). See `business-brief.md` §7 for the rollout model.
 
 Priority: **P0** = bites soon / foundational · **P1** = needed for real use · **P2** = polish.
 
@@ -44,9 +45,22 @@ Priority: **P0** = bites soon / foundational · **P1** = needed for real use · 
   admin access to an IP allowlist or VPN; add fail2ban; confirm MFA (TRMM has TOTP; add Fleet
   SSO/MFA). Agent-facing 443 stays open (roaming laptops). See `design.md` §9.
 
-### [P1] Mass agent deployment for ~500 endpoints
-- We enrolled one laptop by hand. Add a repeatable rollout: GPO startup script / Intune /
-  PDQ-style push for both the TRMM agent (silent `cmd` install) and the fleetd MSI.
+### [P1] Enrollment at scale — two tracks (toward 10k; 1k-new-machine milestone)
+- **Track A — zero-touch for NEW machines (the ~1,000 milestone):** bake the TRMM agent +
+  fleetd into the **standard build / gold image** so each machine auto-enrolls on first boot.
+  ⚠️ **Imaging gotcha:** do NOT capture an *already-enrolled* agent into the image — clones
+  would share one identity and collide. Bake the installer + enroll config, and enroll on
+  **first boot** (e.g., a scheduled/first-logon task) so each device gets a unique agent id /
+  node key. Validate with a small image build before the 1k run.
+- **Track B — push to EXISTING machines:** repeatable rollout via GPO startup script / Intune /
+  SCCM / PDQ for the TRMM agent (silent `cmd` install) and the fleetd MSI, in controlled waves.
+
+### [P1] Scale & HA architecture for 10,000 endpoints
+- Size + make redundant for the 10k goal. **Fleet (compliance)** scales out horizontally
+  (multiple stateless app nodes + managed MySQL/Redis + LB) — straightforward. **Tactical RMM
+  (management)** was chosen for ~500; **load-test at target scale and plan for multiple
+  instances** (split by region/business unit) or re-evaluate. Feeds the sizing/cost numbers in
+  `business-brief.md` §6.
 
 ### [P1] Automated policy → remediation loop (close the loop)
 - The design's headline (UC-07 / milestone M7): a **failing Fleet policy auto-triggers a TRMM
@@ -70,7 +84,8 @@ Priority: **P0** = bites soon / foundational · **P1** = needed for real use · 
   blast radius, and controls for a bank context — beyond the `design.md` §9 bullets.
 
 ### [P2] Cost breakdown doc
-- POC (~$60/mo, 2× t3.medium) vs. a ~500-endpoint sizing estimate (instances, storage, backup).
+- POC (~$60/mo, 2× t3.medium, no HA) vs. a **~10,000-endpoint + HA** sizing estimate
+  (redundant app nodes, managed DB/cache, load balancer, storage, backup). See business-brief §6.
 
 ### [P2] Additional ADRs
 - Record decisions made during the build: SSM-not-SSH (corp blocks 22), DuckDNS + sslip.io,

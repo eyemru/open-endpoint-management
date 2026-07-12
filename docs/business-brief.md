@@ -138,17 +138,26 @@ same scale. Main ongoing non-infrastructure cost: a modest amount of **existing 
 | Phase | Scope | Rough duration | Goal |
 |---|---|---|---|
 | **1. Proof of concept** ✅ done | 1–2 test devices | (complete) | Prove the full loop works |
-| **1b. Sizing & HA design** | — | ~1 week | Size servers/DB for ~10k devices + high availability |
-| **2. Pilot** | ~50–100 devices across teams | 2–4 weeks | Validate at scale; tune policies |
-| **3. Fleet rollout** | All managed devices (**~10,000**) | Phased, weeks–months | Full coverage + reporting |
+| **2. Sizing & HA design** | — | ~1 week | Size servers/database for the 10k target + high availability |
+| **3. Pilot** | **50 devices** | 2–4 weeks | Validate end-to-end; tune policies |
+| **4. First milestone** | **~1,000 newly acquired computers** | phased | Onboard new machines **shipped agent-ready** (zero-touch, see below) |
+| **5. Scale-up** | the **existing** fleet, toward **~10,000** total | phased, months | Push agents to in-service machines; full coverage + reporting |
+
+### How devices are enrolled — two paths
+- **New machines (the ~1,000, and future purchases): zero-touch.** The agents are
+  **pre-installed and pre-configured in the standard build/gold image**, so a computer
+  **enrolls itself automatically the first time it powers on** — no per-device manual work,
+  no desk visit. This is the fastest, lowest-effort path and the target for all new assets.
+- **Existing in-service machines:** agents are **pushed remotely** using our existing tools
+  (Group Policy / Intune / software distribution) in controlled waves.
 
 **What the program needs from the organization:**
 - A decision on **where to host** — existing on-prem servers, new hardware, or a cloud account
-  if we operate one (no cloud is required; server sizing comes from Phase 1b).
+  if we operate one (no cloud is required; server sizing comes from Phase 2).
 - **DNS names** for the servers and the ability to issue certificates.
-- A **pilot group** of devices/users and an **approved maintenance window** policy.
-- Sign-off to **deploy the agents** to managed devices (typically via existing software-
-  distribution or group policy).
+- For new machines: inclusion of the agents in the **standard build/imaging process**.
+- For existing machines: use of our **software-distribution / Group Policy / Intune** to push agents.
+- A **pilot group** and an **approved maintenance-window** policy.
 - A named **IT owner** for day-to-day operation.
 
 ---

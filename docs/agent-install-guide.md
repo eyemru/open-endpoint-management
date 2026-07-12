@@ -141,3 +141,32 @@ the host in Fleet.
 
 > The MSI is served by a one-time HTTP server on the Fleet box's port 80. It's only needed for
 > the initial download; it does not survive a reboot (and isn't needed after enrollment).
+
+---
+
+## 10. Enrollment at scale — two tracks (toward ~10,000 endpoints)
+
+Manual install (above) is for the pilot. At scale there are two paths:
+
+### Track A — zero-touch for NEW machines (the ~1,000-machine milestone)
+Bake **both agents into the standard build / gold image** so a machine enrolls itself on
+first boot — no per-device work, no desk visit.
+
+- Pre-place the TRMM agent silent-install command and the fleetd MSI (URL + enroll secret
+  baked in) in the image.
+- ⚠️ **Imaging gotcha — do NOT capture an *already-enrolled* agent into the image.** If the
+  reference machine has already checked in, every clone shares one identity and they collide.
+  Install the agents but **enroll on first boot** (e.g., a `RunOnce` / scheduled first-logon
+  task, or run install post-sysprep) so each device gets a **unique** TRMM agent id and fleetd
+  node key.
+- Validate with a small image build + a handful of machines before the 1k run.
+
+### Track B — push to EXISTING machines
+Roll out to in-service machines in controlled waves using existing tooling:
+- **GPO** startup/scheduled-task script, **Intune**, **SCCM**, or **PDQ Deploy**.
+- Deliver the TRMM agent silent `-m install` command (run via `cmd`, not PowerShell) and the
+  fleetd `msiexec /i … /quiet` (test `/quiet` under SYSTEM; use `/qn` if needed).
+- Include the Defender exclusions (§4) in the same package if endpoint AV flags the agents.
+
+See the program rollout model in [`business-brief.md`](business-brief.md) §7 and the tracked
+work in [`roadmap.md`](roadmap.md).
