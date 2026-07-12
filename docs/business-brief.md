@@ -19,9 +19,9 @@ We deploy a small, self-hosted system that:
 - **Proves** whether each one meets our security policy (pass/fail, on demand), and
 - **Fixes** problems remotely — pushing security patches and software, at scale.
 
-It runs on infrastructure **we control** (our cloud account or our own servers), so sensitive
-device data never leaves the organization. A working proof-of-concept has already been built
-and validated end-to-end.
+It runs on infrastructure **we control** — our own servers, or a cloud account if we operate
+one — so sensitive device data never leaves the organization. A working proof-of-concept has
+already been built and validated end-to-end.
 
 ---
 
@@ -50,8 +50,9 @@ Two parts: a small **central system** (servers) and a **lightweight agent** on e
 | **Management server** (Tactical RMM) | "Fix it" | Pushes patches/software, runs maintenance, provides remote IT support. IT staff use a web dashboard. |
 | **Compliance server** (FleetDM) | "Prove it" | Continuously checks each device against our security policy and reports pass/fail. Web dashboard for IT/security. |
 
-- Each is a modest virtual machine (≈ 2 CPU / 4 GB RAM). They can run in **our cloud account
-  (e.g., AWS)** or on **our own on-premises servers** — our choice.
+- Each is a modest Linux server (≈ 2 CPU / 4 GB RAM). They run **wherever we prefer** —
+  existing on-premises hardware, new hardware, or a cloud account (AWS/Azure/GCP) if we
+  operate one. **No specific cloud is required or assumed.**
 - Access is over encrypted web (HTTPS). Only IT/security staff log in.
 
 ### 3b. On each Windows computer — lightweight agents
@@ -96,8 +97,8 @@ installed software, and security settings (e.g., "encryption on/off," "firewall 
 and does not watch the screen. Remote-support sessions (where staff can see a screen) are
 **initiated deliberately by IT** and are auditable — not always-on surveillance.
 
-**Where the data lives:** on **our** servers (our cloud account or our datacenter). It does
-**not** go to a third-party vendor's cloud.
+**Where the data lives:** on **our** servers — in our datacenter, or a cloud account we
+operate. It does **not** go to a third-party vendor's cloud.
 
 **Security posture:**
 - All traffic is **encrypted (TLS)**, the same protection used for online banking.
@@ -114,12 +115,15 @@ and does not watch the screen. Remote-support sessions (where staff can see a sc
 commercial equivalent typically runs **$3–7 per device per month** — roughly **$18k–42k/year
 for 500 devices**; figures illustrative).
 
-**Infrastructure options (pick one):**
-| Option | Approx. cost | Notes |
+**Where it runs is our choice** — the system needs only **two standard Linux servers**
+(≈ 2 CPU / 4 GB RAM each) and does **not** depend on any particular cloud. We do **not** need
+an existing cloud account:
+
+| Hosting option | Approx. infrastructure cost | Notes |
 |---|---|---|
-| **Our cloud (AWS)** | ~**$60–100/month** for the two servers | Fastest to stand up; we manage it. |
-| **Repurpose existing on-prem servers** | ~**$0 additional** | If we have spare capacity; keeps everything in our datacenter. |
+| **Repurpose existing on-prem servers/VMs** | ~**$0 additional** | If we have spare capacity; everything stays in our datacenter. |
 | **New on-prem hardware** | one-time hardware cost | If dedicated servers are preferred. |
+| **A cloud account — *only if we already operate one*** (AWS/Azure/GCP) | ~**$60–100/month** | Fastest to stand up, no hardware to buy; optional, not assumed. |
 
 **Key point:** cost is essentially **flat** whether we manage 50 or 500 devices — it doesn't
 scale per-device like commercial licensing. The main ongoing investment is a modest amount of
@@ -136,7 +140,8 @@ scale per-device like commercial licensing. The main ongoing investment is a mod
 | **3. Fleet rollout** | All ~500 devices | Phased, weeks | Full coverage + reporting |
 
 **What the program needs from the organization:**
-- A decision on **hosting** (our cloud vs. on-prem) and, if on-prem, a server (or two).
+- A decision on **where to host** — existing on-prem servers, new hardware, or a cloud account
+  if we operate one (the system needs two small Linux servers; no cloud is required).
 - **DNS names** for the servers and the ability to issue certificates.
 - A **pilot group** of devices/users and an **approved maintenance window** policy.
 - Sign-off to **deploy the agents** to managed devices (typically via existing software-
