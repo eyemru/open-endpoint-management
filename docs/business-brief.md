@@ -148,15 +148,20 @@ same scale. Main ongoing non-infrastructure cost: a modest amount of **existing 
   **pre-installed and pre-configured in the standard build/gold image**, so a computer
   **enrolls itself automatically the first time it powers on** — no per-device manual work,
   no desk visit. This is the fastest, lowest-effort path and the target for all new assets.
-- **Existing in-service machines:** agents are **pushed remotely** using our existing tools
-  (Group Policy / Intune / software distribution) in controlled waves.
+- **Existing in-service machines:** onboarded in **controlled waves** using whatever
+  software-distribution capability is available (e.g., Active Directory Group Policy, Intune,
+  SCCM). **If no such tooling exists today** — which is common, and part of *why* this program
+  is needed — we plan a **lightweight bootstrap** (an AD login script, a one-time guided/self-
+  service installer, or IT-assisted waves for smaller batches). Assessing what's actually in
+  place is an early rollout task, not an assumption.
 
 **What the program needs from the organization:**
 - A decision on **where to host** — existing on-prem servers, new hardware, or a cloud account
   if we operate one (no cloud is required; server sizing comes from Phase 2).
 - **DNS names** for the servers and the ability to issue certificates.
 - For new machines: inclusion of the agents in the **standard build/imaging process**.
-- For existing machines: use of our **software-distribution / Group Policy / Intune** to push agents.
+- For existing machines: **a way to distribute the agents** — existing tooling (Group Policy /
+  Intune / SCCM) if we have it, or agreement on a **bootstrap method** if we don't.
 - A **pilot group** and an **approved maintenance-window** policy.
 - A named **IT owner** for day-to-day operation.
 
@@ -172,6 +177,7 @@ same scale. Main ongoing non-infrastructure cost: a modest amount of **existing 
 | **Internet required (standard install)** | Servers pull software from the internet during setup. An isolated/air-gapped deployment is possible but is additional work. |
 | **Endpoint agent privilege** | System-level by necessity (to patch); governed and audited. |
 | **Scale & high availability (~10k devices)** | Requires a sizing exercise (Phase 1b). The **compliance** component scales out easily to tens of thousands; the **management** component should be load-tested at target scale and may run as **multiple instances** (e.g., split by region/business unit). Infrastructure cost grows with scale + HA (see §6). |
+| **Reaching existing machines** | We should **not assume** central software-distribution tooling (GPO/Intune/SCCM) already exists — its absence is often why this program is needed. Onboarding the existing fleet may require a **bootstrap** (login script / one-time or self-service install); a short assessment of current tooling is an early task. New machines (zero-touch imaging) don't depend on this. |
 | **Production hardening** | Backups, high availability, monitoring, and automated patch policies are planned items beyond the pilot. |
 
 ---

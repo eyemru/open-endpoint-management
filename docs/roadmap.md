@@ -52,8 +52,11 @@ Priority: **P0** = bites soon / foundational · **P1** = needed for real use · 
   would share one identity and collide. Bake the installer + enroll config, and enroll on
   **first boot** (e.g., a scheduled/first-logon task) so each device gets a unique agent id /
   node key. Validate with a small image build before the 1k run.
-- **Track B — push to EXISTING machines:** repeatable rollout via GPO startup script / Intune /
-  SCCM / PDQ for the TRMM agent (silent `cmd` install) and the fleetd MSI, in controlled waves.
+- **Track B — onboard EXISTING machines:** first **assess what distribution tooling actually
+  exists** (don't assume GPO/Intune/SCCM are in place — often they aren't, which is part of why
+  this program exists). If present, push the TRMM agent (silent `cmd` install) + fleetd MSI via
+  it in waves. **If not present, plan a bootstrap:** an AD logon script, a one-time/self-service
+  installer link, or IT-assisted waves for smaller batches.
 
 ### [P1] Scale & HA architecture for 10,000 endpoints
 - Size + make redundant for the 10k goal. **Fleet (compliance)** scales out horizontally

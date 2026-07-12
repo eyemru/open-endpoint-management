@@ -161,12 +161,18 @@ first boot — no per-device work, no desk visit.
   node key.
 - Validate with a small image build + a handful of machines before the 1k run.
 
-### Track B — push to EXISTING machines
-Roll out to in-service machines in controlled waves using existing tooling:
-- **GPO** startup/scheduled-task script, **Intune**, **SCCM**, or **PDQ Deploy**.
-- Deliver the TRMM agent silent `-m install` command (run via `cmd`, not PowerShell) and the
-  fleetd `msiexec /i … /quiet` (test `/quiet` under SYSTEM; use `/qn` if needed).
-- Include the Defender exclusions (§4) in the same package if endpoint AV flags the agents.
+### Track B — onboard EXISTING machines
+**First assess what distribution tooling actually exists** — don't assume GPO/Intune/SCCM are
+in place (often they aren't; that's frequently why this program is needed).
+
+- **If tooling exists:** roll out in controlled waves via **GPO** startup/scheduled-task
+  script, **Intune**, **SCCM**, or **PDQ Deploy** — delivering the TRMM agent silent
+  `-m install` (run via `cmd`, not PowerShell) and the fleetd `msiexec /i … /quiet` (test
+  `/quiet` under SYSTEM; use `/qn` if needed). Include the Defender exclusions (§4) if AV flags
+  the agents.
+- **If no tooling exists:** bootstrap options — an **AD logon script** (if there's Active
+  Directory), a **one-time / self-service installer link** users run, or **IT-assisted waves**
+  for smaller batches. Standing up a basic distribution path is itself an early rollout task.
 
 See the program rollout model in [`business-brief.md`](business-brief.md) §7 and the tracked
 work in [`roadmap.md`](roadmap.md).
