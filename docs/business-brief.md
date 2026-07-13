@@ -118,21 +118,20 @@ that is roughly **$360,000–$840,000 per year** (illustrative). This is the lar
 certain saving — and because commercial pricing is per-device while our cost is
 infrastructure-based, **the savings gap widens as the fleet grows**.
 
-**Infrastructure cost depends on scale and high availability**, so it needs a short **sizing
-exercise** — there is no single flat number. Rough, illustrative order-of-magnitude:
+**Infrastructure is sized to the fleet and to our high-availability needs** — set by a short
+**sizing exercise**, not a fixed number. Crucially, it is **infrastructure-based, not
+per-device**, so unlike commercial licensing it does **not** grow linearly as we add devices.
+Expressed as footprint rather than a speculative price:
 
-| Stage | Hosted in a cloud we operate | Hosted on our own servers (on-prem) |
+| Stage | If hosted in a cloud we operate | If hosted on our own servers |
 |---|---|---|
-| **Proof of concept** (what we built) | ~**$60–100/month** (2 small VMs) | ≈ **$0** on spare capacity |
-| **Production · ~10,000 devices · highly available** | rough order-of-magnitude **~$1,500–$3,500+/month** | ≈ **$0 additional** if repurposing spare virtualization capacity, or a **~$15k–40k one-time** hardware outlay for dedicated servers (+ modest power/maintenance) |
+| **Proof of concept** (built) | a small monthly cloud subscription (two small VMs) | ≈ **$0** on spare capacity (two small VMs) |
+| **Production · ~10,000 · highly available** | an ongoing monthly cloud subscription, sized in the exercise | ≈ **$0 additional** if we repurpose spare virtualization capacity — otherwise roughly **4–8 servers (Medium–Large), spread across ≥ 2 hosts** for high availability |
 
-*(Illustrative, not quotes — production figures come from the sizing exercise. Cost varies with
-the level of high availability, data retention, and management-tool sizing.)*
-
-**Why a range, not a number:** high availability means running components in duplicate (no
-single point of failure) with a resilient database and a load balancer — real but modest cost.
-Even at the high end, it remains a **small fraction** of commercial per-device licensing at the
-same scale. Main ongoing non-infrastructure cost: a modest amount of **existing IT staff time**.
+*Server-size guide:* **S** ≈ 2 CPU / 4 GB · **M** ≈ 4 CPU / 8–16 GB · **L** ≈ 8+ CPU / 32+ GB.
+Figures are planning estimates, finalized by the sizing exercise; cost varies with the level of
+high availability and data retention. The main ongoing non-infrastructure cost is a modest
+amount of **existing IT staff time**.
 
 ---
 
